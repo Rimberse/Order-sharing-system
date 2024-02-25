@@ -1,4 +1,4 @@
-CREATE TABLE BowlingPark (
+CREATE TABLE BowlingParks (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     location VARCHAR(255) NOT NULL,
@@ -6,31 +6,51 @@ CREATE TABLE BowlingPark (
 	alleys JSONB
 );
 
-INSERT INTO BowlingPark (name, location, qrCode, alleys) VALUES(
-							   'Paris Stalingrad park', 
-							   '5-1 Pl. de la Bataille de Stalingrad, 75010 Paris', 
-							   'https://bowlingpark.fr/park/paris-stalingrad',
-							   '[
-							   	   {"id": 1, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/1"},
-								   {"id": 2, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/2"},
-								   {"id": 3, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/3"},
-								   {"id": 4, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/4"},
-								   {"id": 5, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/5"},
-								   {"id": 6, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/6"},
-								   {"id": 7, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/7"},
-								   {"id": 8, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/8"},
-								   {"id": 9, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/9"},
-								   {"id": 10, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/10"},
-								   {"id": 11, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/11"},
-								   {"id": 12, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/12"},
-								   {"id": 13, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/13"},
-								   {"id": 14, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/14"},
-								   {"id": 15, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/15"},
-								   {"id": 16, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/16"},
-								   {"id": 17, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/17"},
-								   {"id": 18, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/18"},
-								   {"id": 19, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/19"},
-								   {"id": 20, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/20"}
-							   ]');
-							   
-SELECT * FROM BowlingPark;
+INSERT INTO BowlingParks (name, location, qrCode, alleys) VALUES(
+	'Paris Stalingrad park', 
+	'5-1 Pl. de la Bataille de Stalingrad, 75010 Paris', 
+	'https://bowlingpark.fr/park/paris-stalingrad',
+	'[
+		{"id": 1, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/1"},
+		{"id": 2, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/2"},
+		{"id": 3, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/3"},
+		{"id": 4, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/4"},
+		{"id": 5, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/5"},
+		{"id": 6, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/6"},
+		{"id": 7, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/7"},
+		{"id": 8, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/8"},
+		{"id": 9, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/9"},
+		{"id": 10, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/10"},
+		{"id": 11, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/11"},
+		{"id": 12, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/12"},
+		{"id": 13, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/13"},
+		{"id": 14, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/14"},
+		{"id": 15, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/15"},
+		{"id": 16, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/16"},
+		{"id": 17, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/17"},
+		{"id": 18, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/18"},
+		{"id": 19, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/19"},
+		{"id": 20, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/20"}
+	]');		   
+
+CREATE TABLE Users (
+    id SERIAL PRIMARY KEY,
+	firstName VARCHAR(50),
+	lastName VARCHAR(50),
+    name VARCHAR(50) UNIQUE,
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255) NOT NULL,
+	phoneNumber VARCHAR(20),
+	role VARCHAR(10) NOT NULL,
+	assignedBowlingParkId INTEGER REFERENCES BowlingParks(id)
+);
+
+INSERT INTO Users (firstName, lastName, name, email, password, phoneNumber, role) VALUES(
+	'John', 'Doe', 'johnDoe', 'john.doe@example.com', '123456789', '06 01 02 03 04', 'customer');
+INSERT INTO Users (name, email, password, role, assignedBowlingParkId) VALUES(
+	'catalogManager1', 'catalog.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'agent', 1);
+INSERT INTO Users (name, email, password, role, assignedBowlingParkId) VALUES(
+	'orderManager1', 'order.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'agent', 1);
+
+SELECT * FROM BowlingParks;
+SELECT * FROM Users;
