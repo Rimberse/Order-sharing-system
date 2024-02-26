@@ -99,7 +99,24 @@ INSERT INTO Orders (userId, productId, parkId, alleyNumber, quantity) VALUES (
 	1, 2, 1, 3, 3
 );
 
+CREATE TABLE Payments (
+    id SERIAL PRIMARY KEY,
+    userId INTEGER REFERENCES Users(id),
+    orderId INTEGER REFERENCES Orders(id),
+    amount DECIMAL(10, 2) NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING'
+);
+
+INSERT INTO Payments (userId, orderId, amount) VALUES (
+	1, 1, 87.5
+);
+
+INSERT INTO Payments (userId, orderId, amount) VALUES (
+	1, 2, 27.5
+);
+
 SELECT * FROM BowlingParks;
 SELECT * FROM Users;
 SELECT * FROM Products;
 SELECT * FROM Orders;
+SELECT * FROM Payments;
