@@ -115,8 +115,24 @@ INSERT INTO Payments (userId, orderId, amount) VALUES (
 	1, 2, 27.5
 );
 
+CREATE TABLE Notifications (
+    id SERIAL PRIMARY KEY,
+    userId INTEGER REFERENCES Users(id),
+    message VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO Notifications (userId, message) VALUES (
+	1, 'thank you for joining!'
+);
+
+INSERT INTO Notifications (userId, message) VALUES (
+	2, 'thank you for singing a contract with us!'
+);
+
 SELECT * FROM BowlingParks;
 SELECT * FROM Users;
 SELECT * FROM Products;
 SELECT * FROM Orders;
 SELECT * FROM Payments;
+SELECT * FROM Notifications;
