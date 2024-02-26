@@ -57,7 +57,6 @@ INSERT INTO Users (name, email, password, role, assignedBowlingParkId) VALUES (
 	'orderManager1', 'order.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'agent', 1
 );
 	
-
 CREATE TABLE Products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -82,6 +81,25 @@ INSERT INTO Products (name, quantity, price) VALUES (
 	'T-shirt', 55, 2
 );
 
+CREATE TABLE Orders (
+    id SERIAL PRIMARY KEY,
+    userId INTEGER REFERENCES Users(id),
+    productId INTEGER REFERENCES Products(id),
+	parkId INTEGER REFERENCES BowlingParks(id),
+	alleyNumber INTEGER NOT NULL CONSTRAINT ck_AlleyNumber_in_range CHECK (alleyNumber >= 1 AND alleyNumber <= 20),
+    quantity INTEGER NOT NULL,
+    status VARCHAR(20) DEFAULT 'PENDING'
+);
+
+INSERT INTO Orders (userId, productId, parkId, alleyNumber, quantity) VALUES (
+	1, 1, 1, 3, 7
+);
+
+INSERT INTO Orders (userId, productId, parkId, alleyNumber, quantity) VALUES (
+	1, 2, 1, 3, 3
+);
+
 SELECT * FROM BowlingParks;
 SELECT * FROM Users;
 SELECT * FROM Products;
+SELECT * FROM Orders;
