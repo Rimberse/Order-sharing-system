@@ -29,6 +29,7 @@ dependencies {
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.3")
 }
 
 tasks.withType<Test> {
