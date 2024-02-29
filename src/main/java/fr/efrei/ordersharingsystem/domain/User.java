@@ -35,6 +35,6 @@ public class User {
     private Role role;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "BowlingParks", referencedColumnName = "id")
-    BowlingPark assignedBowlingParkId;
+    @JoinColumn(name = "assignedBowlingParkId", referencedColumnName = "id")
+    BowlingPark assignedBowlingPark;
 }

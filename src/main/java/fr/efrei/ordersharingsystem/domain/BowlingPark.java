@@ -24,7 +24,7 @@ public class BowlingPark {
     @Column(name = "location", nullable = false)
     private String location;
 
-    @Column(name = "qrCode", nullable = false, unique = true)
+    @Column(name = "qrCode", length = 50, nullable = false, unique = true)
     private String qrCode;
 
     @JdbcTypeCode(SqlTypes.JSON)
