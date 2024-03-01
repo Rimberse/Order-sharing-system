@@ -1,6 +1,6 @@
 package fr.efrei.ordersharingsystem.controller;
 
-import fr.efrei.ordersharingsystem.domain.Product;
+import fr.efrei.ordersharingsystem.domain.Payment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/products")
-public class ProductController {
+@RequestMapping("/api/v1/payment")
+public class PaymentController {
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<Product>> getProducts(@PathVariable Integer id) {//get product from id
+    public ResponseEntity<List<Payment>> getPayment(@PathVariable Integer id) { //checks payment from id
         return ResponseEntity.ok(new ArrayList<>());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<List<Product>> createProducts(@PathVariable Integer id) {//create product from body
+    @PostMapping("/{id}/{amount}")
+    public ResponseEntity<List<Payment>> createPayment(@PathVariable Integer id, @PathVariable Integer amount) {//creates a payment
         return ResponseEntity.ok(new ArrayList<>());
     }
 }
