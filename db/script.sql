@@ -4,20 +4,27 @@ CREATE TABLE BowlingParks (
     location VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Alleys (
-	id SERIAL PRIMARY KEY,
-	parkId INTEGER REFERENCES BowlingParks(id)
-);
-
 INSERT INTO BowlingParks (name, location) VALUES (
 	'Paris Stalingrad park', 
 	'5-1 Pl. de la Bataille de Stalingrad, 75010 Paris'
+);
+
+INSERT INTO BowlingParks (name, location) VALUES (
+	'Paris République park', 
+	'5 Avenue de la République, 75011 Paris'
+);
+
+CREATE TABLE Alleys (
+	number INTEGER CONSTRAINT ck_number_in_range CHECK (number >= 1 AND number <= 20),
+	parkId INTEGER REFERENCES BowlingParks(id),
+	PRIMARY KEY (number, parkId)
 );
 	
 DO $$ 
 BEGIN 
     FOR i IN 1..20 LOOP
-        INSERT INTO Alleys (parkId) VALUES (1);
+        INSERT INTO Alleys (number, parkId) VALUES (i, 1);
+		INSERT INTO Alleys (number, parkId) VALUES (i, 2);
     END LOOP;
 END $$;
 
@@ -49,39 +56,39 @@ CREATE TABLE Products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
 	description VARCHAR(255),
-	quantity INTEGER NOT NULL,
     price DECIMAL(10, 2) NOT NULL
 );
 
-INSERT INTO Products (name, description, quantity, price) VALUES (
-	'Bowling pin', 'Bowling pin. Used to play bowling', 25, 12.50
+INSERT INTO Products (name, description, price) VALUES (
+	'Bowling pin', 'Bowling pin. Used to play bowling', 12.50
 );
 
-INSERT INTO Products (name, description, quantity, price) VALUES (
-	'Bowling ball', 'Bowling ball. Used to play bowling', 7, 27.50
+INSERT INTO Products (name, description, price) VALUES (
+	'Bowling ball', 'Bowling ball. Used to play bowling', 27.50
 );
 
-INSERT INTO Products (name, quantity, price) VALUES (
-	'Beer', 75, 3.99
+INSERT INTO Products (name, price) VALUES (
+	'Beer', 3.99
 );
 
-INSERT INTO Products (name, quantity, price) VALUES (
-	'T-shirt', 55, 2
+INSERT INTO Products (name, price) VALUES (
+	'T-shirt', 2
 );
 
 CREATE TABLE Orders (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES Users(id),
 	parkId INTEGER REFERENCES BowlingParks(id),
-	alleyId INTEGER REFERENCES Alleys(id) CONSTRAINT ck_alleyId_in_range CHECK (alleyId >= 1 AND alleyId <= 20),
+	alleyNumber INTEGER NOT NULL,
+	FOREIGN KEY (alleyNumber, parkId) REFERENCES Alleys (number, parkId),
     status VARCHAR(20) DEFAULT 'PENDING'
 );
 
-INSERT INTO Orders (userId, parkId, alleyId) VALUES (
+INSERT INTO Orders (userId, parkId, alleyNumber) VALUES (
 	1, 1, 3
 );
 
-INSERT INTO Orders (userId, parkId, alleyId) VALUES (
+INSERT INTO Orders (userId, parkId, alleyNumber) VALUES (
 	1, 1, 3
 );
 
