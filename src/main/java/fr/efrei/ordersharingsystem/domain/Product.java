@@ -22,6 +22,6 @@ public class Product {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    @Column(name = "price", precision = 10, scale = 2, nullable = false)
-    private double price;
+    @Column(name = "price", nullable = false)
+    private int price;
 }

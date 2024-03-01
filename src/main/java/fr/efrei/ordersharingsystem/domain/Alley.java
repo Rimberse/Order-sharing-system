@@ -1,16 +1,17 @@
 package fr.efrei.ordersharingsystem.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+@Entity
+@Table(name = "Alleys")
 @Getter
 @Setter
+@Convert(attributeName = "alleys", converter = Alley.class)
 public class Alley {
-    private int id;
-    private String qrCode;
 
-    public Alley(int id, String qrCode) {
-        this.id = id;
-        this.qrCode = qrCode;
-    }
+    private String parkId;
+    @Id
+    private Long number;
 }

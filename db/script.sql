@@ -56,23 +56,23 @@ CREATE TABLE Products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
 	description VARCHAR(255),
-    price DECIMAL(10, 2) NOT NULL
+    price INTEGER NOT NULL
 );
 
 INSERT INTO Products (name, description, price) VALUES (
-	'Bowling pin', 'Bowling pin. Used to play bowling', 12.50
+	'Bowling pin', 'Bowling pin. Used to play bowling', 1250
 );
 
 INSERT INTO Products (name, description, price) VALUES (
-	'Bowling ball', 'Bowling ball. Used to play bowling', 27.50
+	'Bowling ball', 'Bowling ball. Used to play bowling', 2750
 );
 
 INSERT INTO Products (name, price) VALUES (
-	'Beer', 3.99
+	'Beer', 399
 );
 
 INSERT INTO Products (name, price) VALUES (
-	'T-shirt', 2
+	'T-shirt', 200
 );
 
 CREATE TABLE Orders (
@@ -111,16 +111,16 @@ CREATE TABLE Payments (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES Users(id),
     orderId INTEGER REFERENCES Orders(id),
-    amount DECIMAL(10, 2) NOT NULL,
+    amount INTEGER NOT NULL,
     status VARCHAR(20) DEFAULT 'PENDING'
 );
 
 INSERT INTO Payments (userId, orderId, amount) VALUES (
-	1, 1, 87.5
+	1, 1, 8750
 );
 
 INSERT INTO Payments (userId, orderId, amount) VALUES (
-	1, 2, 27.5
+	1, 2, 2750
 );
 
 CREATE TABLE Notifications (

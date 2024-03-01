@@ -21,8 +21,8 @@ public class Payment {
     @JoinColumn(name = "orderId", referencedColumnName = "id")
     private Order order;
 
-    @Column(name = "amount", precision = 10, scale = 2, nullable = false)
-    private double amount;
+    @Column(name = "amount")
+    private int amount;
 
     @Column(name = "status", length = 20, nullable = false)
     private Status status = Status.PENDING;
