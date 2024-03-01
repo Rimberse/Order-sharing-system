@@ -1,37 +1,25 @@
 CREATE TABLE BowlingParks (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    location VARCHAR(255) NOT NULL,
-    qrCode VARCHAR(50) UNIQUE NOT NULL,
-	alleys JSONB
+    location VARCHAR(255) NOT NULL
 );
 
-INSERT INTO BowlingParks (name, location, qrCode, alleys) VALUES (
+CREATE TABLE Alleys (
+	id SERIAL PRIMARY KEY,
+	parkId INTEGER REFERENCES BowlingParks(id)
+);
+
+INSERT INTO BowlingParks (name, location) VALUES (
 	'Paris Stalingrad park', 
-	'5-1 Pl. de la Bataille de Stalingrad, 75010 Paris', 
-	'https://bowlingpark.fr/park/paris-stalingrad',
-	'[
-		{"id": 1, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/1"},
-		{"id": 2, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/2"},
-		{"id": 3, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/3"},
-		{"id": 4, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/4"},
-		{"id": 5, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/5"},
-		{"id": 6, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/6"},
-		{"id": 7, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/7"},
-		{"id": 8, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/8"},
-		{"id": 9, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/9"},
-		{"id": 10, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/10"},
-		{"id": 11, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/11"},
-		{"id": 12, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/12"},
-		{"id": 13, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/13"},
-		{"id": 14, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/14"},
-		{"id": 15, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/15"},
-		{"id": 16, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/16"},
-		{"id": 17, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/17"},
-		{"id": 18, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/18"},
-		{"id": 19, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/19"},
-		{"id": 20, "qrCode": "https://bowlingpark.fr/park/paris-stalingrad/alley/20"}
-	]');		   
+	'5-1 Pl. de la Bataille de Stalingrad, 75010 Paris'
+);
+	
+DO $$ 
+BEGIN 
+    FOR i IN 1..20 LOOP
+        INSERT INTO Alleys (parkId) VALUES (1);
+    END LOOP;
+END $$;
 
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
@@ -84,19 +72,32 @@ INSERT INTO Products (name, quantity, price) VALUES (
 CREATE TABLE Orders (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES Users(id),
-    productId INTEGER REFERENCES Products(id),
 	parkId INTEGER REFERENCES BowlingParks(id),
-	alleyNumber INTEGER NOT NULL CONSTRAINT ck_AlleyNumber_in_range CHECK (alleyNumber >= 1 AND alleyNumber <= 20),
-    quantity INTEGER NOT NULL,
+	alleyId INTEGER REFERENCES Alleys(id) CONSTRAINT ck_alleyId_in_range CHECK (alleyId >= 1 AND alleyId <= 20),
     status VARCHAR(20) DEFAULT 'PENDING'
 );
 
-INSERT INTO Orders (userId, productId, parkId, alleyNumber, quantity) VALUES (
-	1, 1, 1, 3, 7
+INSERT INTO Orders (userId, parkId, alleyId) VALUES (
+	1, 1, 3
 );
 
-INSERT INTO Orders (userId, productId, parkId, alleyNumber, quantity) VALUES (
-	1, 2, 1, 3, 3
+INSERT INTO Orders (userId, parkId, alleyId) VALUES (
+	1, 1, 3
+);
+
+CREATE TABLE OrderItems (
+	id SERIAL PRIMARY KEY,
+	orderId INTEGER REFERENCES Orders(id),
+	productId INTEGER REFERENCES Products(id),
+	quantity INTEGER NOT NULL
+);
+
+INSERT INTO OrderItems (orderId, productId, quantity) VALUES (
+	1, 1, 3
+);
+
+INSERT INTO OrderItems (orderId, productId, quantity) VALUES (
+	2, 2, 7
 );
 
 CREATE TABLE Payments (
@@ -131,8 +132,19 @@ INSERT INTO Notifications (userId, message) VALUES (
 );
 
 SELECT * FROM BowlingParks;
+SELECT * FROM Alleys;
 SELECT * FROM Users;
 SELECT * FROM Products;
 SELECT * FROM Orders;
+SELECT * FROM OrderItems;
 SELECT * FROM Payments;
 SELECT * FROM Notifications;
+
+DROP TABLE Notifications;
+DROP TABLE Payments;
+DROP TABLE OrderItems;
+DROP TABLE Orders;
+DROP TABLE Products;
+DROP TABLE Users;
+DROP TABLE Alleys;
+DROP TABLE BowlingParks;
