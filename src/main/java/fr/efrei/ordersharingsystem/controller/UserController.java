@@ -1,7 +1,8 @@
 package fr.efrei.ordersharingsystem.controller;
 
-import fr.efrei.ordersharingsystem.domain.Product;
+import fr.efrei.ordersharingsystem.domain.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,16 +13,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/products")
-public class ProductController {
-
-    @GetMapping("/{id}")
-    public ResponseEntity<List<Product>> getProducts(@PathVariable Integer id) {//get product from id
-        return ResponseEntity.ok(new ArrayList<>());
-    }
+@RequestMapping("/api/v1/users")
+public class UserController {
 
     @PostMapping("/create")
-    public ResponseEntity<List<Product>> createProducts(@PathVariable Integer id) {//create product from body
+    public ResponseEntity<List<User>> createUser() { //create user with info from request body
         return ResponseEntity.ok(new ArrayList<>());
     }
+
+    @GetMapping("/update")
+    public ResponseEntity<List<User>> updateUser() { //update user info
+        return ResponseEntity.ok(new ArrayList<>());
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<List<User>> deleteUser(@PathVariable Integer id) { //delete user
+        return ResponseEntity.ok(new ArrayList<>());
+    }
+
 }
