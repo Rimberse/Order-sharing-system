@@ -49,24 +49,23 @@ CREATE TABLE Products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
 	description VARCHAR(255),
-	quantity INTEGER NOT NULL,
     price DECIMAL(10, 2) NOT NULL
 );
 
-INSERT INTO Products (name, description, quantity, price) VALUES (
-	'Bowling pin', 'Bowling pin. Used to play bowling', 25, 12.50
+INSERT INTO Products (name, description, price) VALUES (
+	'Bowling pin', 'Bowling pin. Used to play bowling', 12.50
 );
 
-INSERT INTO Products (name, description, quantity, price) VALUES (
-	'Bowling ball', 'Bowling ball. Used to play bowling', 7, 27.50
+INSERT INTO Products (name, description, price) VALUES (
+	'Bowling ball', 'Bowling ball. Used to play bowling', 27.50
 );
 
-INSERT INTO Products (name, quantity, price) VALUES (
-	'Beer', 75, 3.99
+INSERT INTO Products (name, price) VALUES (
+	'Beer', 3.99
 );
 
-INSERT INTO Products (name, quantity, price) VALUES (
-	'T-shirt', 55, 2
+INSERT INTO Products (name, price) VALUES (
+	'T-shirt', 2
 );
 
 CREATE TABLE Orders (
