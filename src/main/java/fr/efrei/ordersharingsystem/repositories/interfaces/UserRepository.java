@@ -11,16 +11,17 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAll();
-    List<User> findAllBy(Role role);
+    List<User> findAllByRole(Role role);
+    List<User> findAllByAssignedBowlingPark(Long id);
     Optional<User> findByFirstName(String firstName);
     Optional<User> findByLastName(String lastName);
     Optional<User> findByFullName(String fullName);
     Optional<User> findByName(String name);
     Optional<User> findByEmail(String email);
-    boolean matchesHashedPassword(String hashValue);
     Optional<User> findByPhoneNumber(String phoneNumber);
     List<User> save(Iterable<User> users);
     User save(User user);
     void delete(User user);
-    boolean exists(Long id);
+    boolean existsBy(Long id);
+    boolean existsByPassword(String hashedPassword);
 }
