@@ -15,9 +15,9 @@ INSERT INTO BowlingParks (name, location) VALUES (
 );
 
 CREATE TABLE Alleys (
-	number INTEGER CONSTRAINT ck_number_in_range CHECK (number >= 1 AND number <= 20),
-	parkId INTEGER REFERENCES BowlingParks(id),
-	PRIMARY KEY (number, parkId)
+    number INTEGER CONSTRAINT ck_number_in_range CHECK (number >= 1 AND number <= 20),
+    parkId INTEGER REFERENCES BowlingParks(id),
+    PRIMARY KEY (number, parkId)
 );
 	
 DO $$ 
@@ -30,14 +30,14 @@ END $$;
 
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
-	firstName VARCHAR(50),
-	lastName VARCHAR(50),
+    firstName VARCHAR(50),
+    lastName VARCHAR(50),
     name VARCHAR(50) UNIQUE,
     email VARCHAR(100) UNIQUE,
     password VARCHAR(255) NOT NULL,
-	phoneNumber VARCHAR(20),
-	role VARCHAR(10) NOT NULL,
-	assignedBowlingParkId INTEGER REFERENCES BowlingParks(id)
+    phoneNumber VARCHAR(20),
+    role VARCHAR(10) NOT NULL,
+    assignedBowlingParkId INTEGER REFERENCES BowlingParks(id)
 );
 
 INSERT INTO Users (firstName, lastName, name, email, password, phoneNumber, role) VALUES (
@@ -55,32 +55,32 @@ INSERT INTO Users (name, email, password, role, assignedBowlingParkId) VALUES (
 CREATE TABLE Products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-	description VARCHAR(255),
-    price DECIMAL(10, 2) NOT NULL
+    description VARCHAR(255),
+    price INTEGER NOT NULL
 );
 
 INSERT INTO Products (name, description, price) VALUES (
-	'Bowling pin', 'Bowling pin. Used to play bowling', 12.50
+	'Bowling pin', 'Bowling pin. Used to play bowling', 1250
 );
 
 INSERT INTO Products (name, description, price) VALUES (
-	'Bowling ball', 'Bowling ball. Used to play bowling', 27.50
+	'Bowling ball', 'Bowling ball. Used to play bowling', 2750
 );
 
 INSERT INTO Products (name, price) VALUES (
-	'Beer', 3.99
+	'Beer', 399
 );
 
 INSERT INTO Products (name, price) VALUES (
-	'T-shirt', 2
+	'T-shirt', 200
 );
 
 CREATE TABLE Orders (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES Users(id),
-	parkId INTEGER REFERENCES BowlingParks(id),
-	alleyNumber INTEGER NOT NULL,
-	FOREIGN KEY (alleyNumber, parkId) REFERENCES Alleys (number, parkId),
+    parkId INTEGER REFERENCES BowlingParks(id),
+    alleyNumber INTEGER NOT NULL,
+    FOREIGN KEY (alleyNumber, parkId) REFERENCES Alleys (number, parkId),
     status VARCHAR(20) DEFAULT 'PENDING'
 );
 
@@ -111,16 +111,16 @@ CREATE TABLE Payments (
     id SERIAL PRIMARY KEY,
     userId INTEGER REFERENCES Users(id),
     orderId INTEGER REFERENCES Orders(id),
-    amount DECIMAL(10, 2) NOT NULL,
+    amount INTEGER NOT NULL,
     status VARCHAR(20) DEFAULT 'PENDING'
 );
 
 INSERT INTO Payments (userId, orderId, amount) VALUES (
-	1, 1, 87.5
+	1, 1, 8750
 );
 
 INSERT INTO Payments (userId, orderId, amount) VALUES (
-	1, 2, 27.5
+	1, 2, 2750
 );
 
 CREATE TABLE Notifications (
