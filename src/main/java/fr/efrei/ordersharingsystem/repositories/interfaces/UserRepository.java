@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findAll();
     List<User> findAllByRole(Role role);
-    List<User> findAllByAssignedBowlingPark(Long id);
+    List<User> findAllByAssignedBowlingParkId(Long id);
     Optional<User> findByFirstName(String firstName);
     Optional<User> findByLastName(String lastName);
-    Optional<User> findByFullName(String fullName);
+    Optional<User> findByFirstNameAndLastName(String firstName, String lastName);
     Optional<User> findByName(String name);
     Optional<User> findByEmail(String email);
     Optional<User> findByPhoneNumber(String phoneNumber);
