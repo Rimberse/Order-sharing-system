@@ -2,12 +2,14 @@ package fr.efrei.ordersharingsystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "BowlingParks")
 @Getter
 @Setter
+@NoArgsConstructor
 public class BowlingPark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

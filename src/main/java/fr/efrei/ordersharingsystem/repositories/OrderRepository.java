@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.repositories.interfaces;
+package fr.efrei.ordersharingsystem.repositories;
 
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.Status;

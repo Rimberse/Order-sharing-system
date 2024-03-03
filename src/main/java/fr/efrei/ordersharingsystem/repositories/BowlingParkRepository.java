@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.repositories.interfaces;
+package fr.efrei.ordersharingsystem.repositories;
 
 import fr.efrei.ordersharingsystem.domain.BowlingPark;
 import org.springframework.data.jpa.repository.JpaRepository;
