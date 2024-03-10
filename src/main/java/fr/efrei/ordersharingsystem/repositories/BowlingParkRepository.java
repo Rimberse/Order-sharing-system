@@ -10,11 +10,7 @@ import java.util.Optional;
 @Repository
 public interface BowlingParkRepository extends JpaRepository<BowlingPark, Long> {
     List<BowlingPark> findAll();
-    Optional<BowlingPark> findByName(String name);
-    Optional<BowlingPark> findByLocation(String location);
-    List<BowlingPark> save(Iterable<BowlingPark> parks);
     BowlingPark save(BowlingPark park);
     void delete(BowlingPark park);
-    boolean existsBy(Long id);
-    boolean existsByLocation(String location);
+
 }
