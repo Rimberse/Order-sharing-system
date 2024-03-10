@@ -18,10 +18,6 @@ public class ProductAggregateHandler implements ProductAggregateService {
     @Autowired
     ProductRepository productRepository;
 
-    public ProductAggregateHandler(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
     public long handle(CreateProductCommand command) {
         var product = new Product();
         product.setName(command.name());
