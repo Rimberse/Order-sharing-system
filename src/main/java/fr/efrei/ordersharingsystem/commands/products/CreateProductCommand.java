@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 
 public record CreateProductCommand(
         @NotBlank @Size(min = 1, max = 50) String name,
+        Long parkId,
         @Size(min = 1, max = 255) String description,
         @NotBlank @Min(value = 1, message = "Minimal price is 1") int price) {
 }
