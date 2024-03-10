@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAll();
+    List<Product> findAllByPark_Id(Long parkId);
     Product save(Product product);
     void delete(Product product);
 

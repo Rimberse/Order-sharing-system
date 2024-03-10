@@ -56,25 +56,26 @@ INSERT INTO users (name, email, password, role, assigned_bowling_park_id) VALUES
 	
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
+    park_id INTEGER REFERENCES bowling_parks (id),
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
     price INTEGER NOT NULL
 );
 
-INSERT INTO products (name, description, price) VALUES (
-	'Bowling pin', 'Bowling pin. Used to play bowling', 1250
+INSERT INTO products (name, park_id, description, price) VALUES (
+	'Bowling pin', 1, 'Bowling pin. Used to play bowling', 1250
 );
 
-INSERT INTO products (name, description, price) VALUES (
-	'Bowling ball', 'Bowling ball. Used to play bowling', 2750
+INSERT INTO products (name, park_id, description, price) VALUES (
+	'Bowling ball', 1, 'Bowling ball. Used to play bowling', 2750
 );
 
-INSERT INTO products (name, price) VALUES (
-	'Beer', 399
+INSERT INTO products (name, park_id, price) VALUES (
+	'Beer', 2, 399
 );
 
-INSERT INTO products (name, price) VALUES (
-	'T-shirt', 200
+INSERT INTO products (name, park_id, price) VALUES (
+	'T-shirt', 2, 200
 );
 
 CREATE TYPE status AS ENUM('PENDING', 'IN_PROGRESS', 'FAILED', 'COMPLETED', 'CANCELLED');
