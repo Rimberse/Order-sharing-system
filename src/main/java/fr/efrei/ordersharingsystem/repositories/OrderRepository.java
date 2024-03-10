@@ -25,6 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByStatusAndUserIdAndAlleyNumber(Status status, Long userId, int alleyNumber);
     List<Order> findAllByStatusAndUserIdAndParkIdAndAlleyNumber(Status status, Long userId, Long parkId, int alleyNumber);
     List<Order> save(Iterable<Order> orders);
+    List<Order> findAllByParkIdAndAlleyNumberAndStatus(Long parkId, Integer alleyNumber, Status status);
     Order save(Order order);
     void delete(Order order);
     boolean existsBy(Long id);
