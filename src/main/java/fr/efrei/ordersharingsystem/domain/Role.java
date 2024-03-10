@@ -1,8 +1,8 @@
 package fr.efrei.ordersharingsystem.domain;
 
 public enum Role {
-    AGENT("agent"),
-    CUSTOMER("customer");
+    AGENT("AGENT"),
+    CUSTOMER("CUSTOMER");
 
     private final String label;
 

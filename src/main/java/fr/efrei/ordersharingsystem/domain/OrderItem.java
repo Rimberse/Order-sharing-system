@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "OrderItems")
+@Table(name = "order_items")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,13 +16,13 @@ public class OrderItem {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "orderId", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "productId", referencedColumnName = "id")
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
     @Column(name = "quantity", nullable = false)
-    private int quantity;
+    private Integer quantity;
 }

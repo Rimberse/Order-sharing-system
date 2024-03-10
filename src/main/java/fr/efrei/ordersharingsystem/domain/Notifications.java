@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Notifications")
+@Table(name = "notifications")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,12 +18,12 @@ public class Notifications {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @Column(name = "message", nullable = false)
     private String message;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at",nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;
 }

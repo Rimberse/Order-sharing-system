@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,10 +15,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "firstName", length = 50)
+    @Column(name = "first_name", length = 50)
     private String firstName;
 
-    @Column(name = "lastName", length = 50)
+    @Column(name = "last_name", length = 50)
     private String lastName;
 
     @Column(name = "name", length = 50, unique = true)
@@ -30,13 +30,14 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "phoneNumber", length = 20)
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
 
     @Column(name = "role", length = 10, nullable = false)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assignedBowlingParkId", referencedColumnName = "id")
+    @JoinColumn(name = "assigned_bowling_park_id", referencedColumnName = "id")
     BowlingPark assignedBowlingPark;
 }

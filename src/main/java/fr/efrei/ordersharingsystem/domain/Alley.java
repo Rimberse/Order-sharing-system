@@ -1,21 +1,24 @@
 package fr.efrei.ordersharingsystem.domain;
 
+import fr.efrei.ordersharingsystem.domain.idclass.AlleyId;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Alleys")
+@Table(name = "alleys")
 @Getter
 @Setter
 @NoArgsConstructor
+@IdClass(AlleyId.class)
 public class Alley {
     @Id
-    private int number;
+    private Integer number;
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "parkId", referencedColumnName = "id")
+    @JoinColumn(name = "park_id", referencedColumnName = "id")
     private BowlingPark park;
 }
+

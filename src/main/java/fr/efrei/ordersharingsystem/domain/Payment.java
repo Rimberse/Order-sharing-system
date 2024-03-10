@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Payments")
+@Table(name = "payments")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,16 +16,17 @@ public class Payment {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "orderId", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
 
     @Column(name = "amount", nullable = false)
-    private int amount;
+    private Integer amount;
 
     @Column(name = "status", length = 20, nullable = false)
+    @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 }
