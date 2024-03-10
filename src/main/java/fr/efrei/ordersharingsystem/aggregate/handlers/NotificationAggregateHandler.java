@@ -2,6 +2,7 @@ package fr.efrei.ordersharingsystem.aggregate.handlers;
 
 import fr.efrei.ordersharingsystem.aggregate.NotificationAggregateService;
 import fr.efrei.ordersharingsystem.aggregate.ProductAggregateService;
+import fr.efrei.ordersharingsystem.commands.notifications.SendMailCommand;
 import fr.efrei.ordersharingsystem.commands.notifications.SendNotificationCommand;
 import fr.efrei.ordersharingsystem.commands.products.CreateProductCommand;
 import fr.efrei.ordersharingsystem.commands.products.DeleteProductCommand;
@@ -15,6 +16,8 @@ import fr.efrei.ordersharingsystem.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -33,4 +36,16 @@ public class NotificationAggregateHandler implements NotificationAggregateServic
             notificationRepository.save(notifications);
         }
     }
+
+    public void handle(SendMailCommand command) {
+        var notifications = new Notifications();
+        notifications.setUser(command.user());
+        if(Objects.equals(command.message(), "")) {
+            notifications.setMessage("Thank you for your patronage, here's the due payment : " + command.invoice());
+        }
+        System.out.println(notifications.getMessage());
+        notificationRepository.save(notifications);
+    }
+
+
 }
