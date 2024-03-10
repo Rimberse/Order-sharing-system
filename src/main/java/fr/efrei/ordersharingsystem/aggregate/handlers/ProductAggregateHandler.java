@@ -1,9 +1,9 @@
 package fr.efrei.ordersharingsystem.aggregate.handlers;
 
 import fr.efrei.ordersharingsystem.aggregate.ProductAggregateService;
-import fr.efrei.ordersharingsystem.commands.CreateProductCommand;
-import fr.efrei.ordersharingsystem.commands.DeleteProductCommand;
-import fr.efrei.ordersharingsystem.commands.ModifyProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.CreateProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.DeleteProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.repositories.ProductRepository;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class ProductAggregateHandler implements ProductAggregateService {
 
     @Autowired
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     public long handle(CreateProductCommand command) {
         var product = new Product();

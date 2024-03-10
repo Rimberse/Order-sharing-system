@@ -1,9 +1,9 @@
 package fr.efrei.ordersharingsystem.controller;
 
 import fr.efrei.ordersharingsystem.aggregate.ProductAggregateService;
-import fr.efrei.ordersharingsystem.commands.CreateProductCommand;
-import fr.efrei.ordersharingsystem.commands.DeleteProductCommand;
-import fr.efrei.ordersharingsystem.commands.ModifyProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.CreateProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.DeleteProductCommand;
+import fr.efrei.ordersharingsystem.commands.products.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
 import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
