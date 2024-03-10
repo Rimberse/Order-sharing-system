@@ -6,6 +6,7 @@ import fr.efrei.ordersharingsystem.commands.products.DeleteProductCommand;
 import fr.efrei.ordersharingsystem.commands.products.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
+import fr.efrei.ordersharingsystem.queries.GetCatalogByParkIdQuery;
 import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/products")
+@RequestMapping("/api/v1/parks/{parkId}/products")
 @RequiredArgsConstructor
 public class ProductController {
     @Autowired
@@ -25,34 +26,34 @@ public class ProductController {
     private ProductAggregateService productAggregateService;
 
     @GetMapping()
-    public ResponseEntity<List<Product>> getProducts() {
-        return ResponseEntity.ok(productProjectionService.handle());
+    public ResponseEntity<List<Product>> getProducts(@PathVariable Long parkId) {
+        GetCatalogByParkIdQuery query = new GetCatalogByParkIdQuery(parkId);
+        return ResponseEntity.ok(productProjectionService.handle(query));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        GetProductByIdQuery query = new GetProductByIdQuery(id);
+    public ResponseEntity<Product> getProduct(@PathVariable Long id, @PathVariable Long parkId) {
+        GetProductByIdQuery query = new GetProductByIdQuery(parkId, id);
         return ResponseEntity.ok(productProjectionService.handle(query));
     }
 
     @PostMapping()
-    public ResponseEntity<String> createProduct(@RequestBody CreateProductCommand command) {
-        var resultId = productAggregateService.handle(command);
+    public ResponseEntity<String> createProduct(@PathVariable Long parkId, @RequestBody CreateProductCommand command) {
+        CreateProductCommand newCommand = new CreateProductCommand(command.name(), parkId, command.description(), command.price());
+        var resultId = productAggregateService.handle(newCommand);
         URI location = URI.create("/api/v1/products/" + resultId);
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> modifyProduct(@PathVariable long id, @RequestBody ModifyProductCommand command) {
-        if (id != command.id()) {
-            throw new IllegalArgumentException("The id in the path and in the body must be the same");
-        }
-        productAggregateService.handle(command);
+    public ResponseEntity<String> modifyProduct(@PathVariable Long parkId, @PathVariable Long id, @RequestBody ModifyProductCommand command) {
+        ModifyProductCommand newCommand = new ModifyProductCommand(id, command.name(), command.description(), command.price());
+        productAggregateService.handle(newCommand);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable long id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable Long parkId, @PathVariable Long id) {
         DeleteProductCommand command = new DeleteProductCommand(id);
         productAggregateService.handle(command);
         return ResponseEntity.noContent().build();

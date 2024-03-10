@@ -1,4 +1,8 @@
 package fr.efrei.ordersharingsystem.queries;
 
-public record GetProductByIdQuery(Long productId) {
+import jakarta.validation.constraints.NotBlank;
+
+public record GetProductByIdQuery(
+        Long parkId,
+        @NotBlank Long productId) {
 }

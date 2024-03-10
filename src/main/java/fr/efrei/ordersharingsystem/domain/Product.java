@@ -15,6 +15,10 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "park_id", referencedColumnName = "id")
+    private BowlingPark park;
+
     @Column(name = "name", length = 100, nullable = false)
     private String name;
 
