@@ -10,6 +10,6 @@ public record ModifyUserCommand(
         @NotBlank @Size(min = 5, max = 100) String email,
         @NotBlank @Size(min = 6, max = 255) String password,
         @Size(min = 10, max = 20) String phoneNumber,
-        @NotBlank @Min(value = 1, message = "Minimal parkId is 1") int assignedBowlingParkId
+        @NotBlank @Min(value = 1, message = "Minimal parkId is 1") long assignedBowlingParkId
 ) {
 }
