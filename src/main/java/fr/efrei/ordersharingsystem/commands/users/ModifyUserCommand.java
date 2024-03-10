@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.commands;
+package fr.efrei.ordersharingsystem.commands.users;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

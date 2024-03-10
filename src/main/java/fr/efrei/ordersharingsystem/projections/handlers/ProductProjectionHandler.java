@@ -2,7 +2,7 @@ package fr.efrei.ordersharingsystem.projections.handlers;
 
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
-import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
+import fr.efrei.ordersharingsystem.queries.products.GetProductByIdQuery;
 import fr.efrei.ordersharingsystem.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

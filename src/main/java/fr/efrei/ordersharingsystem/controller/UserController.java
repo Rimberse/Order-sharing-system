@@ -1,11 +1,16 @@
 package fr.efrei.ordersharingsystem.controller;
 
 import fr.efrei.ordersharingsystem.aggregate.UserAggregateService;
-import fr.efrei.ordersharingsystem.commands.*;
+import fr.efrei.ordersharingsystem.commands.users.CreateUserCommand;
+import fr.efrei.ordersharingsystem.commands.users.DeleteUserCommand;
+import fr.efrei.ordersharingsystem.commands.users.ModifyUserCommand;
 import fr.efrei.ordersharingsystem.domain.Role;
 import fr.efrei.ordersharingsystem.domain.User;
 import fr.efrei.ordersharingsystem.projections.UserProjectionService;
-import fr.efrei.ordersharingsystem.queries.*;
+import fr.efrei.ordersharingsystem.queries.users.GetUserByAssignedBowlingParkIdQuery;
+import fr.efrei.ordersharingsystem.queries.users.GetUserByCredentialsQuery;
+import fr.efrei.ordersharingsystem.queries.users.GetUserByIdQuery;
+import fr.efrei.ordersharingsystem.queries.users.GetUserByRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.commands;
+package fr.efrei.ordersharingsystem.commands.users;
 
 import fr.efrei.ordersharingsystem.domain.Role;
 import jakarta.validation.constraints.Min;

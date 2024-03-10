@@ -1,9 +1,9 @@
 package fr.efrei.ordersharingsystem.aggregate.handlers;
 
 import fr.efrei.ordersharingsystem.aggregate.UserAggregateService;
-import fr.efrei.ordersharingsystem.commands.CreateUserCommand;
-import fr.efrei.ordersharingsystem.commands.DeleteUserCommand;
-import fr.efrei.ordersharingsystem.commands.ModifyUserCommand;
+import fr.efrei.ordersharingsystem.commands.users.CreateUserCommand;
+import fr.efrei.ordersharingsystem.commands.users.DeleteUserCommand;
+import fr.efrei.ordersharingsystem.commands.users.ModifyUserCommand;
 import fr.efrei.ordersharingsystem.domain.BowlingPark;
 import fr.efrei.ordersharingsystem.domain.User;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
