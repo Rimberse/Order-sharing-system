@@ -1,27 +1,56 @@
 package fr.efrei.ordersharingsystem.controller;
 
+import fr.efrei.ordersharingsystem.aggregate.ProductAggregateService;
+import fr.efrei.ordersharingsystem.commands.CreateProductCommand;
+import fr.efrei.ordersharingsystem.commands.DeleteProductCommand;
+import fr.efrei.ordersharingsystem.commands.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
+import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
+import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
 public class ProductController {
+    private ProductProjectionService productProjectionService;
+    private ProductAggregateService productAggregateService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<List<Product>> getProducts(@PathVariable Integer id) {//get product from id
-        return ResponseEntity.ok(new ArrayList<>());
+    @GetMapping()
+    public ResponseEntity<List<Product>> getProducts() {
+        return ResponseEntity.ok(productProjectionService.handle());
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<List<Product>> createProducts(@PathVariable Integer id) {//create product from body
-        return ResponseEntity.ok(new ArrayList<>());
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getProduct(@PathVariable Integer id) {
+        GetProductByIdQuery query = new GetProductByIdQuery(id);
+        return ResponseEntity.ok(productProjectionService.handle(query));
+    }
+
+    @PostMapping()
+    public ResponseEntity<String> createProduct(@RequestBody CreateProductCommand command) {
+        var resultId = productAggregateService.handle(command);
+        URI location = URI.create("/api/v1/products/" + resultId);
+        return ResponseEntity.created(location).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> modifyProduct(@PathVariable long id, @RequestBody ModifyProductCommand command) {
+        if (id != command.id()) {
+            return ResponseEntity.badRequest().body("The id in the path and in the body must be the same");
+        }
+        productAggregateService.handle(command);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable long id) {
+        DeleteProductCommand command = new DeleteProductCommand(id);
+        productAggregateService.handle(command);
+        return ResponseEntity.noContent().build();
     }
 }
