@@ -1,16 +1,21 @@
 package fr.efrei.ordersharingsystem.domain;
 
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "Alleys")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Alley {
-    private int id;
-    private String qrCode;
+    @Id
+    private int number;
 
-    public Alley(int id, String qrCode) {
-        this.id = id;
-        this.qrCode = qrCode;
-    }
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "parkId", referencedColumnName = "id")
+    private BowlingPark park;
 }

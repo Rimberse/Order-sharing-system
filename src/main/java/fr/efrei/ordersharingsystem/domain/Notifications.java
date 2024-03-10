@@ -2,6 +2,7 @@ package fr.efrei.ordersharingsystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
@@ -10,6 +11,7 @@ import java.sql.Timestamp;
 @Table(name = "Notifications")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Notifications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

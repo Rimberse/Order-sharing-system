@@ -6,26 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Payments")
+@Table(name = "OrderItems")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Payment {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User user;
-
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "orderId", referencedColumnName = "id")
     private Order order;
 
-    @Column(name = "amount", nullable = false)
-    private int amount;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "productId", referencedColumnName = "id")
+    private Product product;
 
-    @Column(name = "status", length = 20, nullable = false)
-    private Status status = Status.PENDING;
+    @Column(name = "quantity", nullable = false)
+    private int quantity;
 }

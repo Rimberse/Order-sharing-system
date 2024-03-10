@@ -2,17 +2,14 @@ package fr.efrei.ordersharingsystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-
-import java.util.List;
 
 @Entity
 @Table(name = "BowlingParks")
 @Getter
 @Setter
-@Convert(attributeName = "alleys", converter = Alley.class)
+@NoArgsConstructor
 public class BowlingPark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +20,4 @@ public class BowlingPark {
 
     @Column(name = "location", nullable = false)
     private String location;
-
-    @Column(name = "qrCode", length = 50, nullable = false, unique = true)
-    private String qrCode;
-
-    @JdbcTypeCode(SqlTypes.JSON)
-    private List<Alley> alleys;
 }

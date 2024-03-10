@@ -2,12 +2,14 @@ package fr.efrei.ordersharingsystem.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "Products")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,9 +21,6 @@ public class Product {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
-
-    @Column(name = "price", precision = 10, scale = 2, nullable = false)
-    private double price;
+    @Column(name = "price", nullable = false)
+    private int price;
 }
