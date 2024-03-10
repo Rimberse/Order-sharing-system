@@ -7,6 +7,8 @@ import fr.efrei.ordersharingsystem.commands.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
 import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +18,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@RequiredArgsConstructor
 public class ProductController {
+    @Autowired
     private ProductProjectionService productProjectionService;
+    @Autowired
     private ProductAggregateService productAggregateService;
 
     @GetMapping()

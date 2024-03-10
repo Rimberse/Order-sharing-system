@@ -7,10 +7,15 @@ import fr.efrei.ordersharingsystem.commands.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.repositories.ProductRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class ProductAggregateHandler implements ProductAggregateService {
+
+    @Autowired
     ProductRepository productRepository;
 
     public ProductAggregateHandler(ProductRepository productRepository) {
