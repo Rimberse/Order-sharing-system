@@ -45,7 +45,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<String> modifyProduct(@PathVariable long id, @RequestBody ModifyProductCommand command) {
         if (id != command.id()) {
-            return ResponseEntity.badRequest().body("The id in the path and in the body must be the same");
+            throw new IllegalArgumentException("The id in the path and in the body must be the same");
         }
         productAggregateService.handle(command);
         return ResponseEntity.noContent().build();
