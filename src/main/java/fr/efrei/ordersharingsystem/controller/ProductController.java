@@ -6,7 +6,7 @@ import fr.efrei.ordersharingsystem.commands.products.DeleteProductCommand;
 import fr.efrei.ordersharingsystem.commands.products.ModifyProductCommand;
 import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
-import fr.efrei.ordersharingsystem.queries.GetProductByIdQuery;
+import fr.efrei.ordersharingsystem.queries.products.GetCatalogByParkIdQuery;
 import fr.efrei.ordersharingsystem.queries.products.GetProductByIdQuery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class ProductController {
 
     @GetMapping()
     public ResponseEntity<List<Product>> getProducts(@PathVariable Long parkId) {
-        GetProductByIdQuery.GetCatalogByParkIdQuery query = new GetProductByIdQuery.GetCatalogByParkIdQuery(parkId);
+        GetCatalogByParkIdQuery query = new GetCatalogByParkIdQuery(parkId);
         return ResponseEntity.ok(productProjectionService.handle(query));
     }
 
