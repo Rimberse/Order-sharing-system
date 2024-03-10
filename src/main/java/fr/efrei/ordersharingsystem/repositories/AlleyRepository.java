@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface AlleyRepository extends JpaRepository<Alley, Long> {
     List<Alley> findAll();
+    Alley getAlleyByPark_IdAndNumber (Long parkId, Integer number);
     Alley save(Alley alley);
     void delete(Alley alley);
 }
