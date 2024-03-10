@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.queries;
+package fr.efrei.ordersharingsystem.queries.orders;
 
 import fr.efrei.ordersharingsystem.domain.Status;
 import jakarta.validation.constraints.NotBlank;
