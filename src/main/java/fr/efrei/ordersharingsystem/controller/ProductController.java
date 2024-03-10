@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable Integer id) {
+    public ResponseEntity<Product> getProduct(@PathVariable Long id) {
         GetProductByIdQuery query = new GetProductByIdQuery(id);
         return ResponseEntity.ok(productProjectionService.handle(query));
     }

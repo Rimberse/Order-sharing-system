@@ -1,4 +1,4 @@
 package fr.efrei.ordersharingsystem.queries;
 
-public record GetProductByIdQuery(long productId) {
+public record GetProductByIdQuery(Long productId) {
 }

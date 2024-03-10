@@ -15,11 +15,7 @@ import java.util.List;
 public class ProductProjectionHandler implements ProductProjectionService {
 
     @Autowired
-    private ProductRepository productRepository;
-
-    public ProductProjectionHandler(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
+    private final ProductRepository productRepository;
 
     public List<Product> handle() {
         return productRepository.findAll();
