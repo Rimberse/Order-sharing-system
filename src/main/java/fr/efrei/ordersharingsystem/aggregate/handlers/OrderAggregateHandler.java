@@ -44,14 +44,17 @@ public class OrderAggregateHandler implements OrderAggregateService {
                 command.userId(),
                 Status.PENDING)
                 .stream().findFirst().orElse(null);
-        if (order == null) {
+        var orderNotFound = order == null;
+        if (orderNotFound) {
             order = new Order();
             var alley = alleyRepository.getAlleyByPark_IdAndNumber(command.parkId(), command.alleyNumber());
-            if (alley == null) {
+            var alleyNotFound = alley == null;
+            if (alleyNotFound) {
                 throw new ItemNotFoundException("Park and Alley", command.parkId() + " and " + command.alleyNumber());
             }
             var client = userRepository.findById(command.userId()).orElse(null);
-            if (client == null) {
+            var clientNotFound = client == null;
+            if (clientNotFound) {
                 throw new ItemNotFoundException("User", command.userId());
             }
             order.setParkId(alley.getPark().getId());
@@ -61,14 +64,17 @@ public class OrderAggregateHandler implements OrderAggregateService {
             order = orderRepository.save(order);
         }
         var orderItem = orderItemRepository.findAllByOrderIdAndProduct_Id(order.getId(), command.productId()).stream().findFirst().orElse(null);
-        if (orderItem != null) {
+        var orderItemExists = orderItem != null;
+        if (orderItemExists) {
             throw new IllegalArgumentException("Product already exists in the order. Order: " + order + ". Command: " + command + ".");
         }
         var product = productRepository.findById(command.productId()).orElse(null);
-        if (product == null) {
+        var productNotFound = product == null;
+        if (productNotFound) {
             throw new ItemNotFoundException("Product", command.productId());
         }
-        if (!Objects.equals(product.getParkId(), command.parkId())) {
+        var productNotInPark = !Objects.equals(product.getParkId(), command.parkId());
+        if (productNotInPark) {
             throw new IllegalArgumentException("Product does not belong to the park. Order: " + order + ". Command: " + command + ".");
         }
         orderItem = new OrderItem();
@@ -81,17 +87,21 @@ public class OrderAggregateHandler implements OrderAggregateService {
 
     public void handle(ModifyOrderCommand command) {
         var order = orderRepository.findById(command.id()).orElse(null);
-        if (order == null) {
+        var orderNotFound = order == null;
+        if (orderNotFound) {
             throw new ItemNotFoundException("Order", command.id());
         }
-        if (!Objects.equals(order.getUserId(), command.userId())) {
-            throw new IllegalArgumentException("User is not modifiable. Order: " + order + ". Command: " + command + ".");
+        var orderNotBelongsToUser = !Objects.equals(order.getUserId(), command.userId());
+        if (orderNotBelongsToUser) {
+            throw new IllegalArgumentException("Order does not belong to user. Order: " + order + ". Command: " + command + ".");
         }
-        if (!Objects.equals(order.getParkId(), command.parkId())) {
-            throw new IllegalArgumentException("Park is not modifiable. Order: " + order + ". Command: " + command + ".");
+        var orderNotBelongsToPark = !Objects.equals(order.getParkId(), command.parkId());
+        if (orderNotBelongsToPark) {
+            throw new IllegalArgumentException("Order does not belong to park. Order: " + order + ". Command: " + command + ".");
         }
-        if (!Objects.equals(order.getAlleyNumber(), command.alleyNumber())) {
-            throw new IllegalArgumentException("Alley number is not modifiable. Order: " + order + ". Command: " + command + ".");
+        var orderNotBelongsToAlley = !Objects.equals(order.getAlleyNumber(), command.alleyNumber());
+        if (orderNotBelongsToAlley) {
+            throw new IllegalArgumentException("Alley number does not belong to order. Order: " + order + ". Command: " + command + ".");
         }
         order.setStatus(command.status());
         orderRepository.save(order);
@@ -99,29 +109,37 @@ public class OrderAggregateHandler implements OrderAggregateService {
 
     public void handle(ModifyOrderItemCommand command) {
         var order = orderRepository.findById(command.orderId()).orElse(null);
-        if (order == null) {
+        var orderNotFound = order == null;
+        if (orderNotFound) {
             throw new ItemNotFoundException("Order", command.orderId());
         }
-        if (!Objects.equals(order.getUserId(), command.userId())) {
+        var orderNotBelongsToUser = !Objects.equals(order.getUserId(), command.userId());
+        if (orderNotBelongsToUser) {
             throw new IllegalArgumentException("Wrong user. Order: " + order + ". Command: " + command + ".");
         }
-        if (!Objects.equals(order.getParkId(), command.parkId())) {
+        var orderNotBelongsToPark = !Objects.equals(order.getParkId(), command.parkId());
+        if (orderNotBelongsToPark) {
             throw new IllegalArgumentException("Wrong park. Order: " + order + ". Command: " + command + ".");
         }
-        if (!Objects.equals(order.getAlleyNumber(), command.alleyNumber())) {
+        var orderNotBelongsToAlley = !Objects.equals(order.getAlleyNumber(), command.alleyNumber());
+        if (orderNotBelongsToAlley) {
             throw new IllegalArgumentException("Wrong alley number. Order: " + order + ". Command: " + command + ".");
         }
-        if (order.getStatus() != Status.PENDING) {
+        var orderNotPending = order.getStatus() != Status.PENDING;
+        if (orderNotPending) {
             throw new IllegalArgumentException("Order is not modifiable. Order: " + order + ". Command: " + command + ".");
         }
         var orderItem = orderItemRepository.findById(command.id()).orElse(null);
-        if (orderItem == null) {
+        var orderItemNotFound = orderItem == null;
+        if (orderItemNotFound) {
             throw new ItemNotFoundException("OrderItem", command.id());
         }
-        if (!Objects.equals(orderItem.getOrderId(), command.orderId())) {
-            throw new IllegalArgumentException("Order is not modifiable. OrderItem: " + orderItem + ". Command: " + command + ".");
+        var orderItemNotBelongsToOrder = !Objects.equals(orderItem.getOrderId(), command.orderId());
+        if (orderItemNotBelongsToOrder) {
+            throw new IllegalArgumentException("Order item does not belong to the order. OrderItem: " + orderItem + ". Command: " + command + ".");
         }
-        if (!Objects.equals(orderItem.getProduct().getId(), command.productId())) {
+        var orderItemNotBelongsToProduct = !Objects.equals(orderItem.getProduct().getId(), command.productId());
+        if (!orderItemNotBelongsToProduct) {
             throw new IllegalArgumentException("Product is not modifiable. OrderItem: " + orderItem + ". Command: " + command + ".");
         }
         orderItem.setQuantity(command.quantity());
