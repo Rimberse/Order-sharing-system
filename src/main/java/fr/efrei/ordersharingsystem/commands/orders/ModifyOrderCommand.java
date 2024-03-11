@@ -4,10 +4,10 @@ import fr.efrei.ordersharingsystem.domain.Status;
 import jakarta.validation.constraints.NotBlank;
 
 public record ModifyOrderCommand(
-        @NotBlank Long id,
-        @NotBlank Long userId,
-        @NotBlank Long parkId,
-        @NotBlank Integer alleyNumber,
+        Long id,
+        Long userId,
+        Long parkId,
+        Integer alleyNumber,
         @NotBlank Status status
 ) {
 }
