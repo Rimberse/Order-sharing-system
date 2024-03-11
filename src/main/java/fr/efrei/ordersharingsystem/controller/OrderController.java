@@ -3,6 +3,7 @@ package fr.efrei.ordersharingsystem.controller;
 import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
 import fr.efrei.ordersharingsystem.commands.orders.AddOrderCommand;
 import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderCommand;
+import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderItemCommand;
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.OrderItem;
 import fr.efrei.ordersharingsystem.domain.Status;
@@ -71,4 +72,16 @@ public class OrderController {
         return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/orders/{orderId}/users/{userId}/items/{itemId}")
+    public ResponseEntity<OrderItem> modifyOrderItem(
+            @PathVariable Long parkId,
+            @PathVariable Integer alleyNumber,
+            @PathVariable Long userId,
+            @PathVariable Long orderId,
+            @PathVariable Long itemId,
+            @RequestBody ModifyOrderItemCommand orderItem) {
+        var command = new ModifyOrderItemCommand(itemId, userId, parkId, alleyNumber, orderId, orderItem.productId(), orderItem.quantity());
+        orderAggregateService.handle(command);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -3,6 +3,7 @@ package fr.efrei.ordersharingsystem.aggregate.handlers;
 import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
 import fr.efrei.ordersharingsystem.commands.orders.AddOrderCommand;
 import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderCommand;
+import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderItemCommand;
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.OrderItem;
 import fr.efrei.ordersharingsystem.domain.Status;
@@ -94,5 +95,36 @@ public class OrderAggregateHandler implements OrderAggregateService {
         }
         order.setStatus(command.status());
         orderRepository.save(order);
+    }
+
+    public void handle(ModifyOrderItemCommand command) {
+        var order = orderRepository.findById(command.orderId()).orElse(null);
+        if (order == null) {
+            throw new ItemNotFoundException("Order", command.orderId());
+        }
+        if (!Objects.equals(order.getUserId(), command.userId())) {
+            throw new IllegalArgumentException("Wrong user. Order: " + order + ". Command: " + command + ".");
+        }
+        if (!Objects.equals(order.getParkId(), command.parkId())) {
+            throw new IllegalArgumentException("Wrong park. Order: " + order + ". Command: " + command + ".");
+        }
+        if (!Objects.equals(order.getAlleyNumber(), command.alleyNumber())) {
+            throw new IllegalArgumentException("Wrong alley number. Order: " + order + ". Command: " + command + ".");
+        }
+        if (order.getStatus() != Status.PENDING) {
+            throw new IllegalArgumentException("Order is not modifiable. Order: " + order + ". Command: " + command + ".");
+        }
+        var orderItem = orderItemRepository.findById(command.id()).orElse(null);
+        if (orderItem == null) {
+            throw new ItemNotFoundException("OrderItem", command.id());
+        }
+        if (!Objects.equals(orderItem.getOrderId(), command.orderId())) {
+            throw new IllegalArgumentException("Order is not modifiable. OrderItem: " + orderItem + ". Command: " + command + ".");
+        }
+        if (!Objects.equals(orderItem.getProduct().getId(), command.productId())) {
+            throw new IllegalArgumentException("Product is not modifiable. OrderItem: " + orderItem + ". Command: " + command + ".");
+        }
+        orderItem.setQuantity(command.quantity());
+        orderItemRepository.save(orderItem);
     }
 }
