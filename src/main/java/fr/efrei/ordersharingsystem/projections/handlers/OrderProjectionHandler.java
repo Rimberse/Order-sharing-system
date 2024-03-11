@@ -1,7 +1,6 @@
 package fr.efrei.ordersharingsystem.projections.handlers;
 
 import fr.efrei.ordersharingsystem.domain.Order;
-import fr.efrei.ordersharingsystem.domain.OrderItem;
 import fr.efrei.ordersharingsystem.projections.OrderProjectionService;
 import fr.efrei.ordersharingsystem.queries.orders.GetOrderByOrderIdQuery;
 import fr.efrei.ordersharingsystem.queries.orders.GetOrdersByAlleyQuery;
@@ -16,12 +15,10 @@ import java.util.Objects;
 @Service
 public class OrderProjectionHandler implements OrderProjectionService {
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    public OrderProjectionHandler(OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
+    public OrderProjectionHandler(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
     }
 
     public List<Order> handle(GetOrdersByAlleyQuery query) {
@@ -36,7 +33,7 @@ public class OrderProjectionHandler implements OrderProjectionService {
         if (order == null) {
             throw new IllegalArgumentException("Order not found: " + query.orderId());
         }
-        if (!Objects.equals(order.getPark().getId(), query.parkId())) {
+        if (!Objects.equals(order.getParkId(), query.parkId())) {
             throw new IllegalArgumentException("Order not found in park: " + query.parkId());
         }
         if (!Objects.equals(order.getAlleyNumber(), query.alleyNumber())) {

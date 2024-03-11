@@ -37,7 +37,7 @@ public class OrderAggregateHandler implements OrderAggregateService {
     }
 
     public long handle(AddOrderCommand command) {
-        var order = orderRepository.findAllByParkIdAndAlleyNumberAndUser_IdAndStatus(
+        var order = orderRepository.findAllByParkIdAndAlleyNumberAndUserIdAndStatus(
                 command.parkId(),
                 command.alleyNumber(),
                 command.userId(),
@@ -53,9 +53,9 @@ public class OrderAggregateHandler implements OrderAggregateService {
             if (client == null) {
                 throw new ItemNotFoundException("User", command.userId());
             }
-            order.setPark(alley.getPark());
+            order.setParkId(alley.getPark().getId());
             order.setAlleyNumber(command.alleyNumber());
-            order.setUser(client);
+            order.setUserId(client.getId());
             order.setStatus(Status.PENDING);
             order = orderRepository.save(order);
         }
@@ -83,10 +83,10 @@ public class OrderAggregateHandler implements OrderAggregateService {
         if (order == null) {
             throw new ItemNotFoundException("Order", command.id());
         }
-        if (!Objects.equals(order.getUser().getId(), command.userId())) {
+        if (!Objects.equals(order.getUserId(), command.userId())) {
             throw new IllegalArgumentException("User is not modifiable. Order: " + order + ". Command: " + command + ".");
         }
-        if (!Objects.equals(order.getPark().getId(), command.parkId())) {
+        if (!Objects.equals(order.getParkId(), command.parkId())) {
             throw new IllegalArgumentException("Park is not modifiable. Order: " + order + ". Command: " + command + ".");
         }
         if (!Objects.equals(order.getAlleyNumber(), command.alleyNumber())) {

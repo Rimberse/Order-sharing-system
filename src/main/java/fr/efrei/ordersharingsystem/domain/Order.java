@@ -17,13 +17,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "park_id", referencedColumnName = "id")
-    private BowlingPark park;
+    @Column(name = "park_id", nullable = false)
+    private Long parkId;
 
     @Column(name = "alley_number", nullable = false)
     private Integer alleyNumber;
