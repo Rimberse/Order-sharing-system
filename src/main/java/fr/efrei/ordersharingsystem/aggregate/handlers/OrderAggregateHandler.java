@@ -1,9 +1,7 @@
 package fr.efrei.ordersharingsystem.aggregate.handlers;
 
 import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
-import fr.efrei.ordersharingsystem.commands.orders.AddOrderCommand;
-import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderCommand;
-import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderItemCommand;
+import fr.efrei.ordersharingsystem.commands.orders.*;
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.OrderItem;
 import fr.efrei.ordersharingsystem.domain.Status;
@@ -144,5 +142,13 @@ public class OrderAggregateHandler implements OrderAggregateService {
         }
         orderItem.setQuantity(command.quantity());
         orderItemRepository.save(orderItem);
+    }
+
+    public void handle(DeleteOrderCommand command) {
+        orderRepository.deleteById(command.id());
+    }
+
+    public void handle(DeleteOrderItemCommand command) {
+        orderItemRepository.deleteById(command.id());
     }
 }
