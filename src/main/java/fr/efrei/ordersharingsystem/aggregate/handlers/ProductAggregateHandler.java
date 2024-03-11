@@ -28,7 +28,7 @@ public class ProductAggregateHandler implements ProductAggregateService {
         if (park == null) {
             throw new ItemNotFoundException("BowlingPark", command.parkId());
         }
-        product.setPark(park);
+        product.setParkId(park.getId());
         product.setName(command.name());
         product.setDescription(command.description());
         product.setPrice(command.price());

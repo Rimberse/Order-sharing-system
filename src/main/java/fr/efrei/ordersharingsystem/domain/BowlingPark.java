@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "bowling_parks")
 @Getter
@@ -20,4 +22,7 @@ public class BowlingPark {
 
     @Column(name = "location", nullable = false)
     private String location;
+
+    @OneToMany(mappedBy = "parkId", cascade = CascadeType.ALL)
+    private List<Product> products;
 }
