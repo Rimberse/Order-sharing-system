@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Data
 @RequiredArgsConstructor
 public class AlleyId implements Serializable {
-    private final Integer number;
-    private final BowlingPark park;
+    private Integer number;
+    private Long park;
 }
