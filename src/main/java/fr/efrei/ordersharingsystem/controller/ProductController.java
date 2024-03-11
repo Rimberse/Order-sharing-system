@@ -47,7 +47,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> modifyProduct(@PathVariable Long parkId, @PathVariable Long id, @RequestBody ModifyProductCommand command) {
-        ModifyProductCommand newCommand = new ModifyProductCommand(id, command.name(), command.description(), command.price());
+        ModifyProductCommand newCommand = new ModifyProductCommand(id, parkId, command.name(), command.description(), command.price());
         productAggregateService.handle(newCommand);
         return ResponseEntity.noContent().build();
     }
