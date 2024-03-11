@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "orders")
 @Getter
@@ -29,4 +31,7 @@ public class Order {
     @Column(name = "status", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
+
+    @OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL)
+    private List<OrderItem> items;
 }

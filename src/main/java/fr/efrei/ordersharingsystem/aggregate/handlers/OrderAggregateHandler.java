@@ -1,44 +1,81 @@
 package fr.efrei.ordersharingsystem.aggregate.handlers;
 
 import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
-import fr.efrei.ordersharingsystem.commands.orders.CreateOrderCommand;
+import fr.efrei.ordersharingsystem.commands.orders.AddOrderCommand;
 import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderCommand;
 import fr.efrei.ordersharingsystem.domain.Order;
+import fr.efrei.ordersharingsystem.domain.OrderItem;
 import fr.efrei.ordersharingsystem.domain.Status;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.repositories.*;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-@RequiredArgsConstructor
 @Service
 public class OrderAggregateHandler implements OrderAggregateService {
 
-    @Autowired
     private final OrderRepository orderRepository;
-    @Autowired
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    @Autowired
     private final AlleyRepository alleyRepository;
 
-    public long handle(CreateOrderCommand command) {
-        var order = new Order();
-        var alley = alleyRepository.getAlleyByPark_IdAndNumber(command.parkId(), command.alleyNumber());
-        if (alley == null) {
-            throw new ItemNotFoundException("Park and Alley", command.parkId() + " and " + command.alleyNumber());
+    @Autowired
+    public OrderAggregateHandler(
+            OrderRepository orderRepository,
+            UserRepository userRepository,
+            AlleyRepository alleyRepository,
+            OrderItemRepository orderItemRepository,
+            ProductRepository productRepository) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.alleyRepository = alleyRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.productRepository = productRepository;
+    }
+
+    public long handle(AddOrderCommand command) {
+        var order = orderRepository.findAllByParkIdAndAlleyNumberAndUser_IdAndStatus(
+                command.parkId(),
+                command.alleyNumber(),
+                command.userId(),
+                Status.PENDING)
+                .stream().findFirst().orElse(null);
+        if (order == null) {
+            order = new Order();
+            var alley = alleyRepository.getAlleyByPark_IdAndNumber(command.parkId(), command.alleyNumber());
+            if (alley == null) {
+                throw new ItemNotFoundException("Park and Alley", command.parkId() + " and " + command.alleyNumber());
+            }
+            var client = userRepository.findById(command.userId()).orElse(null);
+            if (client == null) {
+                throw new ItemNotFoundException("User", command.userId());
+            }
+            order.setPark(alley.getPark());
+            order.setAlleyNumber(command.alleyNumber());
+            order.setUser(client);
+            order.setStatus(Status.PENDING);
+            order = orderRepository.save(order);
         }
-        var client = userRepository.findById(command.userId()).orElse(null);
-        if (client == null) {
-            throw new ItemNotFoundException("User", command.userId());
+        var orderItem = orderItemRepository.findAllByOrderIdAndProduct_Id(order.getId(), command.productId()).stream().findFirst().orElse(null);
+        if (orderItem != null) {
+            throw new IllegalArgumentException("Product already exists in the order. Order: " + order + ". Command: " + command + ".");
         }
-        order.setPark(alley.getPark());
-        order.setAlleyNumber(command.alleyNumber());
-        order.setUser(client);
-        order.setStatus(Status.PENDING);
-        return orderRepository.save(order).getId();
+        var product = productRepository.findById(command.productId()).orElse(null);
+        if (product == null) {
+            throw new ItemNotFoundException("Product", command.productId());
+        }
+        if (!Objects.equals(product.getParkId(), command.parkId())) {
+            throw new IllegalArgumentException("Product does not belong to the park. Order: " + order + ". Command: " + command + ".");
+        }
+        orderItem = new OrderItem();
+        orderItem.setOrderId(order.getId());
+        orderItem.setProduct(product);
+        orderItem.setQuantity(command.quantity());
+        orderItemRepository.save(orderItem);
+        return order.getId();
     }
 
     public void handle(ModifyOrderCommand command) {

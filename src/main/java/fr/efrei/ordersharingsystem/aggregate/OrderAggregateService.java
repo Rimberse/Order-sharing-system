@@ -1,9 +1,9 @@
 package fr.efrei.ordersharingsystem.aggregate;
 
-import fr.efrei.ordersharingsystem.commands.orders.CreateOrderCommand;
+import fr.efrei.ordersharingsystem.commands.orders.AddOrderCommand;
 import fr.efrei.ordersharingsystem.commands.orders.ModifyOrderCommand;
 
 public interface OrderAggregateService {
-    long handle(CreateOrderCommand command);
+    long handle(AddOrderCommand command);
     void handle(ModifyOrderCommand command);
 }
