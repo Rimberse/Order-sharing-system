@@ -4,23 +4,32 @@ import fr.efrei.ordersharingsystem.domain.Product;
 import fr.efrei.ordersharingsystem.projections.ProductProjectionService;
 import fr.efrei.ordersharingsystem.queries.products.GetCatalogByParkIdQuery;
 import fr.efrei.ordersharingsystem.queries.products.GetProductByIdQuery;
+import fr.efrei.ordersharingsystem.repositories.BowlingParkRepository;
 import fr.efrei.ordersharingsystem.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-@RequiredArgsConstructor
 @Service
 public class ProductProjectionHandler implements ProductProjectionService {
 
-    @Autowired
     private final ProductRepository productRepository;
+    private final BowlingParkRepository bowlingParkRepository;
+
+    @Autowired
+    public ProductProjectionHandler(ProductRepository productRepository, BowlingParkRepository bowlingParkRepository) {
+        this.productRepository = productRepository;
+        this.bowlingParkRepository = bowlingParkRepository;
+    }
 
     public List<Product> handle(GetCatalogByParkIdQuery query) {
-        return productRepository.findAllByPark_Id(query.parkId());
+        var park = bowlingParkRepository.findById(query.parkId()).orElse(null);
+        if (park == null) {
+            return new ArrayList<>() ;
+        }
+        return park.getProducts();
     }
 
     public Product handle(GetProductByIdQuery query) {
@@ -28,7 +37,7 @@ public class ProductProjectionHandler implements ProductProjectionService {
         if (product == null) {
             return null;
         }
-        if (!Objects.equals(product.getPark().getId(), query.parkId())) {
+        if (!Objects.equals(product.getParkId(), query.parkId())) {
             return null;
         }
         return product;

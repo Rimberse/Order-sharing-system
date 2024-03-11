@@ -18,12 +18,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/parks/{parkId}/products")
-@RequiredArgsConstructor
 public class ProductController {
+    private final ProductProjectionService productProjectionService;
+    private final ProductAggregateService productAggregateService;
+
     @Autowired
-    private ProductProjectionService productProjectionService;
-    @Autowired
-    private ProductAggregateService productAggregateService;
+    public ProductController(ProductProjectionService productProjectionService, ProductAggregateService productAggregateService) {
+        this.productProjectionService = productProjectionService;
+        this.productAggregateService = productAggregateService;
+    }
 
     @GetMapping()
     public ResponseEntity<List<Product>> getProducts(@PathVariable Long parkId) {
@@ -47,7 +50,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     public ResponseEntity<String> modifyProduct(@PathVariable Long parkId, @PathVariable Long id, @RequestBody ModifyProductCommand command) {
-        ModifyProductCommand newCommand = new ModifyProductCommand(id, command.name(), command.description(), command.price());
+        ModifyProductCommand newCommand = new ModifyProductCommand(id, parkId, command.name(), command.description(), command.price());
         productAggregateService.handle(newCommand);
         return ResponseEntity.noContent().build();
     }

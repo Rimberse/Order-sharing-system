@@ -7,9 +7,7 @@ CREATE TABLE bowling_parks (
 INSERT INTO bowling_parks (name, location) VALUES (
 	'Paris Stalingrad park', 
 	'5-1 Pl. de la Bataille de Stalingrad, 75010 Paris'
-);
-
-INSERT INTO bowling_parks (name, location) VALUES (
+), (
 	'Paris République park', 
 	'5 Avenue de la République, 75011 Paris'
 );
@@ -44,13 +42,13 @@ CREATE TABLE users (
 
 INSERT INTO users (first_name, last_name, name, email, password, phone_number, role) VALUES (
 	'John', 'Doe', 'johnDoe', 'john.doe@example.com', '123456789', '06 01 02 03 04', 'CUSTOMER'
+),(
+    'Jane', 'Dole', 'janeDole', 'jane.Dole@example.com', '123456789', '06 01 02 03 04', 'CUSTOMER'
 );
 
 INSERT INTO users (name, email, password, role, assigned_bowling_park_id) VALUES (
 	'catalogManager1', 'catalog.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'AGENT', 1
-);
-
-INSERT INTO users (name, email, password, role, assigned_bowling_park_id) VALUES (
+), (
 	'orderManager1', 'order.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'AGENT', 1
 );
 	
@@ -91,10 +89,8 @@ CREATE TABLE orders (
 
 INSERT INTO orders (user_id, park_id, alley_number) VALUES (
 	1, 1, 3
-);
-
-INSERT INTO orders (user_id, park_id, alley_number) VALUES (
-	1, 1, 3
+), (
+	2, 1, 3
 );
 
 CREATE TABLE order_items (
@@ -125,7 +121,7 @@ INSERT INTO payments (user_id, order_id, amount) VALUES (
 );
 
 INSERT INTO payments (user_id, order_id, amount) VALUES (
-	1, 2, 2750
+	2, 2, 2750
 );
 
 CREATE TABLE notifications (
