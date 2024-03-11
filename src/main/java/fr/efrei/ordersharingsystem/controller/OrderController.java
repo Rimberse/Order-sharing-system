@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     @PostMapping("/users/{userId}")
-    public ResponseEntity<Order> addOrder(
+    public ResponseEntity<String> addOrder(
             @PathVariable Long parkId,
             @PathVariable Integer alleyNumber,
             @PathVariable Long userId,
@@ -61,7 +61,7 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{orderId}/users/{userId}")
-    public ResponseEntity<Order> modifyOrder(
+    public ResponseEntity<String> modifyOrder(
             @PathVariable Long parkId,
             @PathVariable Integer alleyNumber,
             @PathVariable Long userId,
@@ -73,7 +73,7 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{orderId}/users/{userId}/items/{itemId}")
-    public ResponseEntity<OrderItem> modifyOrderItem(
+    public ResponseEntity<String> modifyOrderItem(
             @PathVariable Long parkId,
             @PathVariable Integer alleyNumber,
             @PathVariable Long userId,
