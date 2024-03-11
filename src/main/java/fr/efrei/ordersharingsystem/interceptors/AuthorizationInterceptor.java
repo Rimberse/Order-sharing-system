@@ -28,7 +28,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         String agentId = request.getHeader("user-id");
         if (agentId == null) {
             System.out.println("No user-id header");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return false;
         }
         var user = userRepository.findById(Long.parseLong(agentId)).orElse(null);
@@ -37,13 +37,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         var userNotFound = user == null;
         if (userNotFound) {
             System.out.println("User not found");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return false;
         }
         var userNotAuthorized = !user.getAssignedBowlingPark().getId().equals(parkId);
         if (userNotAuthorized) {
             System.out.println("User not authorized");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return false;
         }
 
