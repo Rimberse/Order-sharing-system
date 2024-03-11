@@ -1,7 +1,6 @@
-package fr.efrei.ordersharingsystem.controller;
+package fr.efrei.ordersharingsystem.interceptors;
 
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
