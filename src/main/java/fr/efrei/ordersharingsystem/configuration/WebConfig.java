@@ -25,7 +25,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry registry) {
         registry
                 .addInterceptor(authorizationInterceptor())
-                .addPathPatterns("/api/v1/parks/**/products**")
-                ;
+                .addPathPatterns("/api/v1/parks/**/products**");
     }
 }
