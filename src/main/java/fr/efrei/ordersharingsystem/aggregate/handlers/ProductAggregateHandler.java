@@ -23,11 +23,8 @@ public class ProductAggregateHandler implements ProductAggregateService {
 
     public long handle(CreateProductCommand command) {
         var product = new Product();
-        var park = bowlingParkRepository.findById(command.parkId()).orElse(null);
-        var parkNotFound = park == null;
-        if (parkNotFound) {
-            throw new ItemNotFoundException("BowlingPark", command.parkId());
-        }
+        var park = bowlingParkRepository.findById(command.parkId())
+                .orElseThrow(() -> new ItemNotFoundException("BowlingPark", command.parkId()));
         product.setParkId(park.getId());
         product.setName(command.name());
         product.setDescription(command.description());
@@ -36,11 +33,8 @@ public class ProductAggregateHandler implements ProductAggregateService {
     }
 
     public void handle(ModifyProductCommand command) {
-        var product = productRepository.findById(command.id()).orElse(null);
-        var productNotFound = product == null;
-        if (productNotFound) {
-            throw new ItemNotFoundException("Product", command.id());
-        }
+        var product = productRepository.findById(command.id())
+                .orElseThrow(() -> new ItemNotFoundException("Product", command.id()));
         var productNotBelongsToPark = !product.getParkId().equals(command.parkId());
         if (productNotBelongsToPark) {
             throw new IllegalArgumentException("Product does not belong to the park");

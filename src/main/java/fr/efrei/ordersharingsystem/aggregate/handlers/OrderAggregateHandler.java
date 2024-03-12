@@ -55,11 +55,8 @@ public class OrderAggregateHandler implements OrderAggregateService {
 
     private Order createNewOrder(AddOrderCommand command) {
         var order = new Order();
-        var client = userRepository.findById(command.userId()).orElse(null);
-        var clientNotFound = client == null;
-        if (clientNotFound) {
-            throw new ItemNotFoundException("User", command.userId());
-        }
+        var client = userRepository.findById(command.userId())
+                .orElseThrow(() -> new ItemNotFoundException("User", command.userId()));
         order.setUserId(client.getId());
         order = orderRepository.save(order);
         return order;
@@ -67,31 +64,25 @@ public class OrderAggregateHandler implements OrderAggregateService {
 
     public long handle(AddOrderCommand command) {
         var session = sessionRepository.findAllByParkIdAndAlleyNumberAndStatus(
-                command.parkId(),
-                command.alleyNumber(),
-                Status.PENDING)
-                .stream().findFirst().orElse(null);
-        var sessionNotFound = session == null;
-        if (sessionNotFound) {
-            session = createNewSession(command);
-        }
+                    command.parkId(),
+                    command.alleyNumber(),
+                    Status.PENDING
+                )
+                .stream().findFirst()
+                .orElse(createNewSession(command));
         var order = session.getOrders().stream()
                 .filter(o -> Objects.equals(o.getUserId(), command.userId()))
-                .findFirst().orElse(null);
-        var orderNotFound = order == null;
-        if (orderNotFound) {
-            order = createNewOrder(command);
-        }
-        var orderItem = orderItemRepository.findAllByOrderIdAndProduct_Id(order.getId(), command.productId()).stream().findFirst().orElse(null);
-        var orderItemExists = orderItem != null;
-        if (orderItemExists) {
-            throw new IllegalArgumentException("Product already exists in the order. Order: " + order + ". Command: " + command + ".");
-        }
-        var product = productRepository.findById(command.productId()).orElse(null);
-        var productNotFound = product == null;
-        if (productNotFound) {
-            throw new ItemNotFoundException("Product", command.productId());
-        }
+                .findFirst()
+                .orElse(createNewOrder(command));
+        var orderItem = orderItemRepository
+                .findAllByOrderIdAndProduct_Id(order.getId(), command.productId())
+                .stream().findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Product already exists in the order. Order: " + order + ". Command: " + command + "."
+                ));
+        var product = productRepository
+                .findById(command.productId())
+                .orElseThrow(() -> new ItemNotFoundException("Product", command.productId()));
         var productNotInPark = !Objects.equals(product.getParkId(), command.parkId());
         if (productNotInPark) {
             throw new IllegalArgumentException("Product does not belong to the park. Order: " + order + ". Command: " + command + ".");
@@ -105,17 +96,14 @@ public class OrderAggregateHandler implements OrderAggregateService {
     }
 
     public void handle(ModifyOrderItemCommand command) {
-        var order = orderRepository.findById(command.orderId()).orElse(null);
-        var orderNotFound = order == null;
-        if (orderNotFound) {
-            throw new ItemNotFoundException("Order", command.orderId());
-        }
+        var order = orderRepository.findById(command.orderId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId()));
         var orderNotBelongsToUser = !Objects.equals(order.getUserId(), command.userId());
         if (orderNotBelongsToUser) {
             throw new IllegalArgumentException("Wrong user. Order: " + order + ". Command: " + command + ".");
         }
         var session = sessionRepository.findById(order.getSessionId()).orElse(null);
-        assert session != null;
+        assert session != null; // order cannot exist without a session
         var sessionNotBelongsToAlley =
                 !Objects.equals(session.getParkId(), command.parkId()) ||
                 !Objects.equals(session.getAlleyNumber(), command.alleyNumber());
@@ -126,11 +114,8 @@ public class OrderAggregateHandler implements OrderAggregateService {
         if (sessionNotPending) {
             throw new IllegalArgumentException("Order is not modifiable. Order: " + order + ". Command: " + command + ".");
         }
-        var orderItem = orderItemRepository.findById(command.id()).orElse(null);
-        var orderItemNotFound = orderItem == null;
-        if (orderItemNotFound) {
-            throw new ItemNotFoundException("OrderItem", command.id());
-        }
+        var orderItem = orderItemRepository.findById(command.id())
+                .orElseThrow(() -> new ItemNotFoundException("OrderItem", command.id()));
         var orderItemNotBelongsToOrder = !Objects.equals(orderItem.getOrderId(), command.orderId());
         if (orderItemNotBelongsToOrder) {
             throw new IllegalArgumentException("Order item does not belong to the order. OrderItem: " + orderItem + ". Command: " + command + ".");

@@ -10,29 +10,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Service
 public class PaymentAggregateHandler implements PaymentAggregateService {
-    private PaymentRepository paymentRepository;
-    private UserRepository userRepository;
-    private OrderRepository orderRepository;
-    private OrderItemRepository orderItemRepository;
-    private ProductRepository productRepository;
+    private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final ProductRepository productRepository;
+    private final SessionRepository sessionRepository;
 
     @Autowired
-    public PaymentAggregateHandler(PaymentRepository paymentRepository, UserRepository userRepository,
-                                   OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
+    public PaymentAggregateHandler(
+            PaymentRepository paymentRepository,
+            UserRepository userRepository,
+            OrderRepository orderRepository,
+            OrderItemRepository orderItemRepository,
+            ProductRepository productRepository,
+            SessionRepository sessionRepository
+    ) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.sessionRepository = sessionRepository;
     }
 
     public Payment handle(CreatePaymentCommand command) {
-        Order order = orderRepository.findById(command.orderId())
-                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId()));
+        var session = sessionRepository.findById(command.sessionId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.sessionId()));
 
         User user = userRepository.findById(command.userId())
                 .orElseThrow(() -> new ItemNotFoundException("User", command.userId()));
@@ -40,8 +48,8 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
         // Finds all order items associated with a given user order
         List<OrderItem> orderItems = orderItemRepository.findAll()
                 .stream()
-                .filter(orderItem -> orderItem.getOrder().getId() == command.orderId())
-                .collect(Collectors.toList());
+                .filter(orderItem -> Objects.equals(orderItem.getOrderId(), command.sessionId()))
+                .toList();
 
         // Calculates total due amount for a given user order
         int total = orderItems
@@ -52,19 +60,18 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
                                     .orElseThrow(() -> new ItemNotFoundException("Product", orderItem.getProduct().getId()));
                             return orderItem.getQuantity() * product.getPrice();
                         }
-                )
-                .collect(Collectors.summingInt(Integer::intValue));
+                ).mapToInt(Integer::intValue).sum();
 
         Payment payment = new Payment();
         payment.setStatus(Status.IN_PROGRESS);
 
         if (total < command.amount()) {
             payment.setStatus(Status.CANCELLED);
-            throw new InvalidPaymentException("Payment", command.orderId());
+            throw new InvalidPaymentException("Payment", command.sessionId());
         }
 
-        payment.setUser(user);
-        payment.setOrder(order);
+        payment.setUserId(user.getId());
+        payment.setSession(session);
         payment.setAmount(command.amount());
         payment.setStatus(Status.COMPLETED);
         return paymentRepository.save(payment);
