@@ -46,3 +46,8 @@ psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/insert.sql
 ```
 4. Install dependencies and build the project
 5. Run the application
+
+## Architecture
+The architecture of the system is based on the CQRS pattern.
+Here is the diagram of the architecture:
+![Architecture](./CQRS_diagram.png)
