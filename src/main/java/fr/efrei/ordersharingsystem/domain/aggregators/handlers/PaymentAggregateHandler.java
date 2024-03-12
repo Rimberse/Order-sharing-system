@@ -57,7 +57,10 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
             amount = totalDueAmount - totalPaymentAmount;
         }
         payment.setAmount(amount);
-        if (paymentService.pay(command.paymentAccount(), amount)) {
+        if (command.paymentAccount().equals("cash")) {
+            payment.setStatus(Status.COMPLETED);
+            System.out.println("Payment with cash: " + amount + " for order " + order.getId() + " has been made.");
+        } else if (paymentService.pay(command.paymentAccount(), amount)) {
             payment.setStatus(Status.COMPLETED);
         } else {
             payment.setStatus(Status.FAILED);
