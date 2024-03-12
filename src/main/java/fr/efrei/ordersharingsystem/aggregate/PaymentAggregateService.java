@@ -4,5 +4,5 @@ import fr.efrei.ordersharingsystem.commands.payments.CreatePaymentCommand;
 import fr.efrei.ordersharingsystem.domain.Payment;
 
 public interface PaymentAggregateService {
-    Payment handle(CreatePaymentCommand command);
+    void handle(CreatePaymentCommand command);
 }

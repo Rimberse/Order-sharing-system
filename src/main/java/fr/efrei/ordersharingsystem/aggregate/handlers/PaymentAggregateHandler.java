@@ -3,77 +3,60 @@ package fr.efrei.ordersharingsystem.aggregate.handlers;
 import fr.efrei.ordersharingsystem.aggregate.PaymentAggregateService;
 import fr.efrei.ordersharingsystem.commands.payments.CreatePaymentCommand;
 import fr.efrei.ordersharingsystem.domain.*;
-import fr.efrei.ordersharingsystem.exceptions.InvalidPaymentException;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
+import fr.efrei.ordersharingsystem.infrastructure.interfaces.PaymentService;
 import fr.efrei.ordersharingsystem.repositories.*;
+import fr.efrei.ordersharingsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class PaymentAggregateHandler implements PaymentAggregateService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
-    private final ProductRepository productRepository;
-    private final SessionRepository sessionRepository;
+    private final PaymentService paymentService;
 
     @Autowired
     public PaymentAggregateHandler(
             PaymentRepository paymentRepository,
             UserRepository userRepository,
             OrderRepository orderRepository,
-            OrderItemRepository orderItemRepository,
-            ProductRepository productRepository,
-            SessionRepository sessionRepository
+            PaymentService paymentService
     ) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.productRepository = productRepository;
-        this.sessionRepository = sessionRepository;
+        this.paymentService = paymentService;
     }
+    public void handle(CreatePaymentCommand command) {
+        var order = orderRepository.findById(command.orderId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId()));
 
-    public Payment handle(CreatePaymentCommand command) {
-        var session = sessionRepository.findById(command.sessionId())
-                .orElseThrow(() -> new ItemNotFoundException("Order", command.sessionId()));
-
-        User user = userRepository.findById(command.userId())
+        var user = userRepository.findById(command.userId())
                 .orElseThrow(() -> new ItemNotFoundException("User", command.userId()));
 
-        // Finds all order items associated with a given user order
-        List<OrderItem> orderItems = orderItemRepository.findAll()
-                .stream()
-                .filter(orderItem -> Objects.equals(orderItem.getOrderId(), command.sessionId()))
-                .toList();
-
         // Calculates total due amount for a given user order
-        int total = orderItems
-                .stream()
-                .map(
-                        orderItem -> {
-                            Product product = productRepository.findById(orderItem.getProduct().getId())
-                                    .orElseThrow(() -> new ItemNotFoundException("Product", orderItem.getProduct().getId()));
-                            return orderItem.getQuantity() * product.getPrice();
-                        }
-                ).mapToInt(Integer::intValue).sum();
+        var totalDueAmount = Utils.calculateTotalDueAmount(orderRepository.findById(command.orderId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId())));
+        var totalPaymentAmount = Utils.calculateTotalPaymentAmount(orderRepository.findById(command.orderId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId())));
 
-        Payment payment = new Payment();
-        payment.setStatus(Status.IN_PROGRESS);
 
-        if (total < command.amount()) {
-            payment.setStatus(Status.CANCELLED);
-            throw new InvalidPaymentException("Payment", command.sessionId());
-        }
-
+        var payment = new Payment();
         payment.setUserId(user.getId());
-        payment.setSession(session);
-        payment.setAmount(command.amount());
-        payment.setStatus(Status.COMPLETED);
-        return paymentRepository.save(payment);
+        payment.setOrderId(order.getId());
+        var amount = command.amount();
+        if (amount + totalPaymentAmount > totalDueAmount) {
+            amount = totalDueAmount - totalPaymentAmount;
+        }
+        payment.setAmount(amount);
+        if (paymentService.pay(command.paymentAccount(), amount)) {
+            payment.setStatus(Status.COMPLETED);
+        } else {
+            payment.setStatus(Status.FAILED);
+        }
+        paymentRepository.save(payment);
     }
 }

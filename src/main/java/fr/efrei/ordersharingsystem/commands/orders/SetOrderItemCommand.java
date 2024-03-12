@@ -3,7 +3,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 
-public record AddOrderCommand(
+public record SetOrderItemCommand(
         Long userId,
         Long parkId,
         Integer alleyNumber,
