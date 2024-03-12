@@ -10,7 +10,6 @@ import fr.efrei.ordersharingsystem.infrastructure.services.PaymentService;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.OrderRepository;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.PaymentRepository;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.UserRepository;
-import fr.efrei.ordersharingsystem.repositories.*;
 import fr.efrei.ordersharingsystem.domain.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

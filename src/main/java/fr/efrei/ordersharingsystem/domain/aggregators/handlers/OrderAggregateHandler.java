@@ -1,7 +1,6 @@
 package fr.efrei.ordersharingsystem.domain.aggregators.handlers;
 
 import fr.efrei.ordersharingsystem.domain.aggregators.OrderAggregateService;
-import fr.efrei.ordersharingsystem.commands.orders.*;
 import fr.efrei.ordersharingsystem.entity.Order;
 import fr.efrei.ordersharingsystem.entity.OrderItem;
 import fr.efrei.ordersharingsystem.entity.Status;
@@ -12,7 +11,6 @@ import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.OrderItemRepository;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.OrderRepository;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.ProductRepository;
-import fr.efrei.ordersharingsystem.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
