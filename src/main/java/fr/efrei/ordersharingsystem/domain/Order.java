@@ -20,16 +20,8 @@ public class Order {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(name = "park_id", nullable = false)
-    private Long parkId;
-
-    @Column(name = "alley_number", nullable = false)
-    private Integer alleyNumber;
-
-    @Column(name = "status", length = 20, nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Status status = Status.PENDING;
-
+    @Column(name = "session_id", nullable = false)
+    private Long sessionId;
     @OneToMany(mappedBy = "orderId", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 }

@@ -1,11 +1,10 @@
-package fr.efrei.ordersharingsystem.commands.orders;
+package fr.efrei.ordersharingsystem.commands.sessions;
 
 import fr.efrei.ordersharingsystem.domain.Status;
 import jakarta.validation.constraints.NotBlank;
 
-public record ModifyOrderCommand(
+public record ModifySessionCommand(
         Long id,
-        Long userId,
         Long parkId,
         Integer alleyNumber,
         @NotBlank Status status

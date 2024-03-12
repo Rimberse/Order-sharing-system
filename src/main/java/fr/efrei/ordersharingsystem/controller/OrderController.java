@@ -1,40 +1,51 @@
 package fr.efrei.ordersharingsystem.controller;
 
 import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
+import fr.efrei.ordersharingsystem.aggregate.SessionAggregateService;
 import fr.efrei.ordersharingsystem.commands.orders.*;
+import fr.efrei.ordersharingsystem.commands.sessions.DeleteSessionCommand;
 import fr.efrei.ordersharingsystem.domain.Order;
-import fr.efrei.ordersharingsystem.domain.OrderItem;
+import fr.efrei.ordersharingsystem.domain.Session;
 import fr.efrei.ordersharingsystem.domain.Status;
 import fr.efrei.ordersharingsystem.projections.OrderProjectionService;
+import fr.efrei.ordersharingsystem.projections.SessionProjectionService;
 import fr.efrei.ordersharingsystem.queries.orders.GetOrderByOrderIdQuery;
-import fr.efrei.ordersharingsystem.queries.orders.GetOrdersByAlleyQuery;
+import fr.efrei.ordersharingsystem.queries.sessions.GetSessionByAlleyQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/parks/{parkId}/alleys/{alleyNumber}")
 public class OrderController {
     private final OrderProjectionService orderProjectionService;
     private final OrderAggregateService orderAggregateService;
+    private final SessionProjectionService sessionProjectionService;
+    private final SessionAggregateService sessionAggregateService;
 
     @Autowired
-    public OrderController(OrderProjectionService orderProjectionService, OrderAggregateService orderAggregateService) {
+    public OrderController(
+            OrderProjectionService orderProjectionService,
+            OrderAggregateService orderAggregateService,
+            SessionAggregateService sessionAggregateService,
+            SessionProjectionService sessionProjectionService
+    ) {
         this.orderProjectionService = orderProjectionService;
         this.orderAggregateService = orderAggregateService;
+        this.sessionAggregateService = sessionAggregateService;
+        this.sessionProjectionService = sessionProjectionService;
     }
 
 
     @GetMapping("/orders")
-    public ResponseEntity<List<Order>> getOrders(
+    public ResponseEntity<Session> getSessionOrders(
             @PathVariable Long parkId,
             @PathVariable Integer alleyNumber,
             @RequestParam(defaultValue = "PENDING") Status status) {
-        GetOrdersByAlleyQuery query = new GetOrdersByAlleyQuery(parkId, alleyNumber, status);
-        return ResponseEntity.ok(orderProjectionService.handle(query));
+        GetSessionByAlleyQuery query = new GetSessionByAlleyQuery(parkId, alleyNumber, status);
+        return ResponseEntity.ok(sessionProjectionService.handle(query));
     }
 
     @GetMapping("/orders/{orderId}")
@@ -58,18 +69,6 @@ public class OrderController {
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/orders/{orderId}/users/{userId}")
-    public ResponseEntity<String> modifyOrder(
-            @PathVariable Long parkId,
-            @PathVariable Integer alleyNumber,
-            @PathVariable Long userId,
-            @PathVariable Long orderId,
-            @RequestBody ModifyOrderCommand status) {
-        var command = new ModifyOrderCommand(orderId, userId, parkId, alleyNumber, status.status());
-        orderAggregateService.handle(command);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/orders/{orderId}/users/{userId}/items/{itemId}")
     public ResponseEntity<String> modifyOrderItem(
             @PathVariable Long parkId,
@@ -82,13 +81,13 @@ public class OrderController {
         orderAggregateService.handle(command);
         return ResponseEntity.noContent().build();
     }
-    @DeleteMapping("/orders/{orderId}/users/{userId}")
-    public ResponseEntity<String> deleteOrder(
+
+    @DeleteMapping("/sessions/{sessionId}")
+    public ResponseEntity<String> deleteSession(
             @PathVariable Long parkId,
             @PathVariable Integer alleyNumber,
-            @PathVariable Long userId,
-            @PathVariable Long orderId) {
-        orderAggregateService.handle(new DeleteOrderCommand(orderId));
+            @PathVariable Long sessionId) {
+        sessionAggregateService.handle(new DeleteSessionCommand(sessionId, parkId, alleyNumber));
         return ResponseEntity.noContent().build();
     }
 

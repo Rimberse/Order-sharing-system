@@ -4,6 +4,7 @@ import fr.efrei.ordersharingsystem.aggregate.OrderAggregateService;
 import fr.efrei.ordersharingsystem.commands.orders.*;
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.OrderItem;
+import fr.efrei.ordersharingsystem.domain.Session;
 import fr.efrei.ordersharingsystem.domain.Status;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.repositories.*;
@@ -20,6 +21,7 @@ public class OrderAggregateHandler implements OrderAggregateService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final AlleyRepository alleyRepository;
+    private final SessionRepository sessionRepository;
 
     @Autowired
     public OrderAggregateHandler(
@@ -27,39 +29,58 @@ public class OrderAggregateHandler implements OrderAggregateService {
             UserRepository userRepository,
             AlleyRepository alleyRepository,
             OrderItemRepository orderItemRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository,
+            SessionRepository sessionRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.alleyRepository = alleyRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.sessionRepository = sessionRepository;
+    }
+
+    private Session createNewSession(AddOrderCommand command) {
+        var alley = alleyRepository.getAlleyByPark_IdAndNumber(command.parkId(), command.alleyNumber());
+        var alleyNotFound = alley == null;
+        if (alleyNotFound) {
+            throw new ItemNotFoundException("Park and Alley", command.parkId() + " and " + command.alleyNumber());
+        }
+        var session = new Session();
+        session.setParkId(command.parkId());
+        session.setAlleyNumber(command.alleyNumber());
+        session.setStatus(Status.PENDING);
+        session = sessionRepository.save(session);
+        return session;
+    }
+
+    private Order createNewOrder(AddOrderCommand command) {
+        var order = new Order();
+        var client = userRepository.findById(command.userId()).orElse(null);
+        var clientNotFound = client == null;
+        if (clientNotFound) {
+            throw new ItemNotFoundException("User", command.userId());
+        }
+        order.setUserId(client.getId());
+        order = orderRepository.save(order);
+        return order;
     }
 
     public long handle(AddOrderCommand command) {
-        var order = orderRepository.findAllByParkIdAndAlleyNumberAndUserIdAndStatus(
+        var session = sessionRepository.findAllByParkIdAndAlleyNumberAndStatus(
                 command.parkId(),
                 command.alleyNumber(),
-                command.userId(),
                 Status.PENDING)
                 .stream().findFirst().orElse(null);
+        var sessionNotFound = session == null;
+        if (sessionNotFound) {
+            session = createNewSession(command);
+        }
+        var order = session.getOrders().stream()
+                .filter(o -> Objects.equals(o.getUserId(), command.userId()))
+                .findFirst().orElse(null);
         var orderNotFound = order == null;
         if (orderNotFound) {
-            order = new Order();
-            var alley = alleyRepository.getAlleyByPark_IdAndNumber(command.parkId(), command.alleyNumber());
-            var alleyNotFound = alley == null;
-            if (alleyNotFound) {
-                throw new ItemNotFoundException("Park and Alley", command.parkId() + " and " + command.alleyNumber());
-            }
-            var client = userRepository.findById(command.userId()).orElse(null);
-            var clientNotFound = client == null;
-            if (clientNotFound) {
-                throw new ItemNotFoundException("User", command.userId());
-            }
-            order.setParkId(alley.getPark().getId());
-            order.setAlleyNumber(command.alleyNumber());
-            order.setUserId(client.getId());
-            order.setStatus(Status.PENDING);
-            order = orderRepository.save(order);
+            order = createNewOrder(command);
         }
         var orderItem = orderItemRepository.findAllByOrderIdAndProduct_Id(order.getId(), command.productId()).stream().findFirst().orElse(null);
         var orderItemExists = orderItem != null;
@@ -83,28 +104,6 @@ public class OrderAggregateHandler implements OrderAggregateService {
         return order.getId();
     }
 
-    public void handle(ModifyOrderCommand command) {
-        var order = orderRepository.findById(command.id()).orElse(null);
-        var orderNotFound = order == null;
-        if (orderNotFound) {
-            throw new ItemNotFoundException("Order", command.id());
-        }
-        var orderNotBelongsToUser = !Objects.equals(order.getUserId(), command.userId());
-        if (orderNotBelongsToUser) {
-            throw new IllegalArgumentException("Order does not belong to user. Order: " + order + ". Command: " + command + ".");
-        }
-        var orderNotBelongsToPark = !Objects.equals(order.getParkId(), command.parkId());
-        if (orderNotBelongsToPark) {
-            throw new IllegalArgumentException("Order does not belong to park. Order: " + order + ". Command: " + command + ".");
-        }
-        var orderNotBelongsToAlley = !Objects.equals(order.getAlleyNumber(), command.alleyNumber());
-        if (orderNotBelongsToAlley) {
-            throw new IllegalArgumentException("Alley number does not belong to order. Order: " + order + ". Command: " + command + ".");
-        }
-        order.setStatus(command.status());
-        orderRepository.save(order);
-    }
-
     public void handle(ModifyOrderItemCommand command) {
         var order = orderRepository.findById(command.orderId()).orElse(null);
         var orderNotFound = order == null;
@@ -115,16 +114,16 @@ public class OrderAggregateHandler implements OrderAggregateService {
         if (orderNotBelongsToUser) {
             throw new IllegalArgumentException("Wrong user. Order: " + order + ". Command: " + command + ".");
         }
-        var orderNotBelongsToPark = !Objects.equals(order.getParkId(), command.parkId());
-        if (orderNotBelongsToPark) {
-            throw new IllegalArgumentException("Wrong park. Order: " + order + ". Command: " + command + ".");
-        }
-        var orderNotBelongsToAlley = !Objects.equals(order.getAlleyNumber(), command.alleyNumber());
-        if (orderNotBelongsToAlley) {
+        var session = sessionRepository.findById(order.getSessionId()).orElse(null);
+        assert session != null;
+        var sessionNotBelongsToAlley =
+                !Objects.equals(session.getParkId(), command.parkId()) ||
+                !Objects.equals(session.getAlleyNumber(), command.alleyNumber());
+        if (sessionNotBelongsToAlley) {
             throw new IllegalArgumentException("Wrong alley number. Order: " + order + ". Command: " + command + ".");
         }
-        var orderNotPending = order.getStatus() != Status.PENDING;
-        if (orderNotPending) {
+        var sessionNotPending = session.getStatus() != Status.PENDING;
+        if (sessionNotPending) {
             throw new IllegalArgumentException("Order is not modifiable. Order: " + order + ". Command: " + command + ".");
         }
         var orderItem = orderItemRepository.findById(command.id()).orElse(null);
@@ -142,10 +141,6 @@ public class OrderAggregateHandler implements OrderAggregateService {
         }
         orderItem.setQuantity(command.quantity());
         orderItemRepository.save(orderItem);
-    }
-
-    public void handle(DeleteOrderCommand command) {
-        orderRepository.deleteById(command.id());
     }
 
     public void handle(DeleteOrderItemCommand command) {
