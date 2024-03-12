@@ -14,6 +14,8 @@ import fr.efrei.ordersharingsystem.domain.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PaymentAggregateHandler implements PaymentAggregateService {
     private final PaymentRepository paymentRepository;
@@ -61,12 +63,18 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
             payment.setStatus(Status.FAILED);
         }
         paymentRepository.save(payment);
+        if (payment.getStatus() == Status.FAILED) {
+            var users = List.of(user);
+            var title = "Payment for order " + order.getId() + " has failed";
+            var message = "Please try again";
+            notificationService.sendNotification(users, title, message);
+            return;
+        }
 
         var users = userRepository.findAllUsersInOrderId(order.getId());
         var newOrder = orderRepository.findById(command.orderId())
                 .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId()));
-        var totalPaymentAmountAfterPayment = Utils.calculateTotalPaymentAmount(newOrder);
-        var remainingAmountToBePaid = totalDueAmount - totalPaymentAmountAfterPayment;
+        var remainingAmountToBePaid = totalDueAmount - totalPaymentAmount - amount;
         var title = "A payment for order " + newOrder.getId() + " has been made";
         var message = "The remaining amount to be paid is " + remainingAmountToBePaid;
         if (remainingAmountToBePaid == 0) {
@@ -76,6 +84,5 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
             message = "All payments for order " + newOrder.getId() + " is completed";
         }
         notificationService.sendNotification(users, title, message);
-
     }
 }
