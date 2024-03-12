@@ -40,9 +40,9 @@ Scripts in the `db` directory can be used to initialize the database.
 You can run the following command to initialize the database:
 ```bash
 # Use this command to create the tables
-psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/create.sql
+psql -h localhost -p $DB_PORT -U $DB_USER -d $DB_NAME -f db/create.sql
 # Use this command to insert some data
-psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/insert.sql
+psql -h localhost -p $DB_PORT -U $DB_USER -d $DB_NAME -f db/insert.sql
 ```
 4. Install dependencies and build the project
 5. Run the application
