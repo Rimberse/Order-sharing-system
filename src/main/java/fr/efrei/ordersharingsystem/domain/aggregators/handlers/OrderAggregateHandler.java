@@ -49,6 +49,7 @@ public class OrderAggregateHandler implements OrderAggregateService {
         if (productNotInPark) {
             throw new IllegalArgumentException("Product does not belong to the park. Order: " + order + ". Command: " + command + ".");
         }
+        orderItem.setUserId(command.userId());
         orderItem.setOrderId(order.getId());
         orderItem.setProduct(product);
         orderItem.setQuantity(command.quantity());
