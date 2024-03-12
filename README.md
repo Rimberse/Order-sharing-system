@@ -51,3 +51,6 @@ psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/insert.sql
 The architecture of the system is based on the CQRS pattern.
 Here is the diagram of the architecture:
 ![Architecture](./CQRS_diagram.png)
+
+## Postman Collection
+Please import the postman collection named 'software_systems_architecures_project.postman_collection' for testing purposes.
