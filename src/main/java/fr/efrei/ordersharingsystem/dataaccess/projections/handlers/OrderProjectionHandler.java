@@ -8,7 +8,7 @@ import fr.efrei.ordersharingsystem.entity.Order;
 import fr.efrei.ordersharingsystem.entity.Status;
 import fr.efrei.ordersharingsystem.dataaccess.projections.OrderProjectionService;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.OrderRepository;
-import fr.efrei.ordersharingsystem.domain.utils.Utils;
+import fr.efrei.ordersharingsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

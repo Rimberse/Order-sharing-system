@@ -1,4 +1,4 @@
-package fr.efrei.ordersharingsystem.domain.utils;
+package fr.efrei.ordersharingsystem.utils;
 
 import fr.efrei.ordersharingsystem.entity.Order;
 import fr.efrei.ordersharingsystem.entity.Payment;
