@@ -4,11 +4,11 @@ import fr.efrei.ordersharingsystem.aggregate.PaymentAggregateService;
 import fr.efrei.ordersharingsystem.commands.payments.CreatePaymentCommand;
 import fr.efrei.ordersharingsystem.domain.*;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
+import fr.efrei.ordersharingsystem.infrastructure.interfaces.NotificationService;
 import fr.efrei.ordersharingsystem.infrastructure.interfaces.PaymentService;
 import fr.efrei.ordersharingsystem.repositories.*;
 import fr.efrei.ordersharingsystem.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,18 +17,21 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final PaymentService paymentService;
+    private final NotificationService notificationService;
 
     @Autowired
     public PaymentAggregateHandler(
             PaymentRepository paymentRepository,
             UserRepository userRepository,
             OrderRepository orderRepository,
-            PaymentService paymentService
+            PaymentService paymentService,
+            NotificationService notificationService
     ) {
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.paymentService = paymentService;
+        this.notificationService = notificationService;
     }
     public void handle(CreatePaymentCommand command) {
         var order = orderRepository.findById(command.orderId())
@@ -38,11 +41,8 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
                 .orElseThrow(() -> new ItemNotFoundException("User", command.userId()));
 
         // Calculates total due amount for a given user order
-        var totalDueAmount = Utils.calculateTotalDueAmount(orderRepository.findById(command.orderId())
-                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId())));
-        var totalPaymentAmount = Utils.calculateTotalPaymentAmount(orderRepository.findById(command.orderId())
-                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId())));
-
+        var totalDueAmount = Utils.calculateTotalDueAmount(order);
+        var totalPaymentAmount = Utils.calculateTotalPaymentAmount(order);
 
         var payment = new Payment();
         payment.setUserId(user.getId());
@@ -58,5 +58,21 @@ public class PaymentAggregateHandler implements PaymentAggregateService {
             payment.setStatus(Status.FAILED);
         }
         paymentRepository.save(payment);
+
+        var users = userRepository.findAllUsersInOrderId(order.getId());
+        var newOrder = orderRepository.findById(command.orderId())
+                .orElseThrow(() -> new ItemNotFoundException("Order", command.orderId()));
+        var totalPaymentAmountAfterPayment = Utils.calculateTotalPaymentAmount(newOrder);
+        var remainingAmountToBePaid = totalDueAmount - totalPaymentAmountAfterPayment;
+        var title = "A payment for order " + newOrder.getId() + " has been made";
+        var message = "The remaining amount to be paid is " + remainingAmountToBePaid;
+        if (remainingAmountToBePaid == 0) {
+            newOrder.setStatus(Status.COMPLETED);
+            orderRepository.save(newOrder);
+            title = "Order " + newOrder.getId() + " is Complete";
+            message = "All payments for order " + newOrder.getId() + " is completed";
+        }
+        notificationService.sendNotification(users, title, message);
+
     }
 }

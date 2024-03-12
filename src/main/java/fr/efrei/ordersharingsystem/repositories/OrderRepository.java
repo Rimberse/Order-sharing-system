@@ -2,6 +2,7 @@ package fr.efrei.ordersharingsystem.repositories;
 
 import fr.efrei.ordersharingsystem.domain.Order;
 import fr.efrei.ordersharingsystem.domain.Status;
+import fr.efrei.ordersharingsystem.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
