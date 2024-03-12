@@ -12,5 +12,4 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     List<OrderItem> findAllByOrderIdAndProduct_Id(Long orderId, Long productId);
     OrderItem save(OrderItem orderItem);
     void delete(OrderItem orderItem);
-
 }
