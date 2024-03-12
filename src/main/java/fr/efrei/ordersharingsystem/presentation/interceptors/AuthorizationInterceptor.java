@@ -20,7 +20,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             HttpServletRequest request,
             HttpServletResponse response,
             Object handler) throws Exception {
-        if (request.getMethod().equals("GET")) {
+        if (request.getMethod().equals("GET") && request.getRequestURI().contains("/products")) {
             return true;
         }
 
@@ -39,7 +39,9 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return false;
         }
-        var userNotAuthorized = !user.getAssignedBowlingPark().getId().equals(parkId);
+        var userNotAuthorized =
+                user.getAssignedBowlingPark() == null ||
+                !user.getAssignedBowlingPark().getId().equals(parkId);
         if (userNotAuthorized) {
             System.out.println("User not authorized");
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
