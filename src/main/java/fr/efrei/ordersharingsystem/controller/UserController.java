@@ -36,14 +36,14 @@ public class UserController {
         return ResponseEntity.ok(userProjectionService.handle());
     }
 
-    @GetMapping()
-    public ResponseEntity<List<User>> getUserByRole(@RequestParam("role") String role) {
-        Role roleType = (role.equals(Role.CUSTOMER)) ? Role.CUSTOMER : Role.AGENT;
+    @GetMapping("/role")
+    public ResponseEntity<List<User>> getUserByRole(@RequestParam("type") String type) {
+        Role roleType = (type.equals(Role.CUSTOMER)) ? Role.CUSTOMER : Role.AGENT;
         GetUserByRole query = new GetUserByRole(roleType);
         return ResponseEntity.ok(userProjectionService.handle(query));
     }
 
-    @GetMapping()
+    @GetMapping("/club")
     public ResponseEntity<List<User>> getUserByBowlingPark(@RequestParam("role") Optional<String> role, @RequestParam("assignedBowlingParkId") Long assignedBowlingParkId) {
         String roleValue = role.orElse(null);
         Role roleType = (roleValue != null && role.equals(Role.CUSTOMER)) ? Role.CUSTOMER : (role != null) ? Role.AGENT : null;
@@ -57,7 +57,7 @@ public class UserController {
         return ResponseEntity.ok(userProjectionService.handle(query));
     }
 
-    @GetMapping
+    @GetMapping("/credentials")
     public ResponseEntity<User> getUserByCredentials(@RequestParam("name") Optional<String> name, @RequestParam("email") Optional<String> email,
                                                      @RequestParam("password") String password) {
         GetUserByCredentialsQuery query = new GetUserByCredentialsQuery(name.orElse(null), email.orElse(null), password);
