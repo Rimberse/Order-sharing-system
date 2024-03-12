@@ -57,11 +57,3 @@ INSERT INTO order_items (user_id, order_id, product_id, quantity)VALUES
 INSERT INTO payments (user_id, order_id, amount) VALUES
     (1, 2, 8750),
     (2, 2, 2750);
-
-INSERT INTO notifications (user_id, message) VALUES (
-    1, 'thank you for joining!'
-);
-
-INSERT INTO notifications (user_id, message) VALUES (
-    2, 'thank you for singing a contract with us!'
-);

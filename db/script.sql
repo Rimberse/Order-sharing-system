@@ -57,11 +57,3 @@ CREATE TABLE payments (
     amount INTEGER NOT NULL,
     status STATUS DEFAULT 'PENDING'
 );
-
-
-CREATE TABLE notifications (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    message VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
