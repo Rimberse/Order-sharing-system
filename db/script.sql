@@ -78,20 +78,25 @@ INSERT INTO products (name, park_id, price) VALUES (
 
 CREATE TYPE status AS ENUM('PENDING', 'IN_PROGRESS', 'FAILED', 'COMPLETED', 'CANCELLED');
 
-CREATE TABLE orders (
+CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    park_id INTEGER REFERENCES bowling_parks (id),
+    park_id INTEGER NOT NULL ,
     alley_number INTEGER NOT NULL,
     FOREIGN KEY (alley_number, park_id) REFERENCES alleys (number, park_id),
     status STATUS DEFAULT 'PENDING'
 );
 
-INSERT INTO orders (user_id, park_id, alley_number) VALUES (
-	1, 1, 3
-), (
-	2, 1, 3
+INSERT INTO sessions (park_id, alley_number) VALUES (1, 3);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    session_id INTEGER NOT NULL REFERENCES sessions(id)
 );
+
+INSERT INTO orders (user_id, session_id) VALUES
+    (1, 1),
+    (2, 1);
 
 CREATE TABLE order_items (
 	id SERIAL PRIMARY KEY,
