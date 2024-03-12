@@ -19,7 +19,7 @@ You can use Docker to deploy a PostgreSQL database.
 There is a `docker-compose.yml` file in the root directory of the project
 that can be used to deploy a PostgreSQL database with Docker.
 You can change the environment variables in the `docker-compose.yml` file to configure the database.
-Run the following command to deploy a PostgreSQL database with Docker:
+Run the following command at project's root directory to deploy a PostgreSQL database with Docker:
 ```bash
 docker compose up -d
 ```
@@ -28,10 +28,21 @@ docker compose up -d
 
 You will need to set up your environment variables to connect to the database:
 ```bash
-export DB_URL=jdbc:postgresql://localhost:$DB_PORT/$DB_NAME
+# Replace the variables marked with $ with your own values
+export DB_URL=jdbc:postgresql://localhost:$DB_PORT/$DB_NAME?stringtype=unspecified
 export DB_USERNAME=$YOUR_DB_USERNAME
 export DB_PASSWORD=$YOUR_PASSWORD
 ```
 
-3. Install dependencies and build the project
-4. Run the application
+3. Initialize the database
+
+Scripts in the `db` directory can be used to initialize the database.
+You can run the following command to initialize the database:
+```bash
+# Use this command to create the tables
+psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/create.sql
+# Use this command to insert some data
+psql -h localhost -p $DB_PORT -U $DB_USERNAME -d $DB_NAME -f db/insert.sql
+```
+4. Install dependencies and build the project
+5. Run the application
