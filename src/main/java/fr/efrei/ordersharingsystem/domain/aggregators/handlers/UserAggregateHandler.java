@@ -5,6 +5,7 @@ import fr.efrei.ordersharingsystem.domain.commands.users.CreateUserCommand;
 import fr.efrei.ordersharingsystem.domain.commands.users.DeleteUserCommand;
 import fr.efrei.ordersharingsystem.domain.commands.users.ModifyUserCommand;
 import fr.efrei.ordersharingsystem.entity.BowlingPark;
+import fr.efrei.ordersharingsystem.entity.Role;
 import fr.efrei.ordersharingsystem.entity.User;
 import fr.efrei.ordersharingsystem.exceptions.ItemNotFoundException;
 import fr.efrei.ordersharingsystem.infrastructure.repositories.BowlingParkRepository;
@@ -32,14 +33,11 @@ public class UserAggregateHandler implements UserAggregateService {
         user.setPassword(command.password());
         user.setPhoneNumber(command.phoneNumber());
         user.setRole(command.role());
-
-        BowlingPark bowlingPark = bowlingParkRepository.findById(command.assignedBowlingParkId()).orElse(null);
-
-        if (bowlingPark == null) {
-            throw new ItemNotFoundException("Bowling park", command.assignedBowlingParkId());
+        if (command.role().equals(Role.AGENT)) {
+            BowlingPark bowlingPark = bowlingParkRepository.findById(command.assignedBowlingParkId())
+                    .orElseThrow(() -> new ItemNotFoundException("Bowling park", command.assignedBowlingParkId()));
+            user.setAssignedBowlingPark(bowlingPark);
         }
-
-        user.setAssignedBowlingPark(bowlingPark);
         return userRepository.save(user);
     }
 

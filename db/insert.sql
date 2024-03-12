@@ -23,7 +23,7 @@ INSERT INTO users (first_name, last_name, name, email, password, phone_number, r
 INSERT INTO users (name, email, password, role, assigned_bowling_park_id) VALUES (
     'catalogManager1', 'catalog.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'AGENT', 1
 ), (
-    'orderManager1', 'order.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'AGENT', 1
+    'orderManager1', 'order.manager1.paris-stalingrad@bowlingpark.fr', '123456789', 'AGENT', 2
 );
 
 INSERT INTO products (name, park_id, description, price) VALUES (
