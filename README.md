@@ -30,7 +30,7 @@ You will need to set up your environment variables to connect to the database:
 ```bash
 # Replace the variables marked with $ with your own values
 export DB_URL=jdbc:postgresql://localhost:$DB_PORT/$DB_NAME?stringtype=unspecified
-export DB_USERNAME=$YOUR_DB_USERNAME
+export DB_USER=$YOUR_DB_USERNAME
 export DB_PASSWORD=$YOUR_PASSWORD
 ```
 
