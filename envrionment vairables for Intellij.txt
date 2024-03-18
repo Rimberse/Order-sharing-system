@@ -1,1 +1,0 @@
-DB_PASSWORD=gS3Qx$3&67&ofA;DB_USER=efrei;DB_URL=jdbc:postgresql://vmi1522210.contaboserver.net:9432/postgres?stringtype=unspecified
